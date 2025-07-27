@@ -1,0 +1,215 @@
+/* V2 ANIMATIONS */
+
+@keyframes echo-expand-2d {
+  0% {
+    opacity: 0;
+    width: 150px;
+    height: 150px;
+  }
+  50% {
+    opacity: 0.6;
+  }
+  100% {
+    opacity: 0;
+    width: 100vmin;
+    height: 100vmin;
+  }
+}
+
+@keyframes glitch {
+  0% { transform: translate(0); }
+  20% { transform: translate(-5px, 5px); }
+  40% { transform: translate(-5px, -5px); }
+  60% { transform: translate(5px, 5px); }
+  80% { transform: translate(5px, -5px); }
+  100% { transform: translate(0); }
+}
+
+.animate-glitch {
+  animation: glitch 0.2s infinite;
+}
+
+/* V2 Scrolling Banner Animations */
+@keyframes scroll-left {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-100%); }
+}
+
+@keyframes scroll-right {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(0); }
+}
+
+/* Added from original concentric-echo component */
+
+@keyframes euro-pulse {
+  0% {
+    opacity: 0;
+    transform: scale(0.1);
+  }
+  15% {
+    opacity: 0.6;
+    transform: scale(0.4);
+  }
+  30% {
+    opacity: 0.8;
+    transform: scale(0.7);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  70% {
+    opacity: 0.7;
+    transform: scale(1.4);
+  }
+  85% {
+    opacity: 0.4;
+    transform: scale(1.8);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(2.2);
+  }
+}
+
+@keyframes techno-float {
+  0%, 100% {
+    transform: translateY(0px) translateX(0px) rotate(0deg);
+    opacity: 0.4;
+  }
+  25% {
+    transform: translateY(-30px) translateX(15px) rotate(90deg);
+    opacity: 1;
+  }
+  50% {
+    transform: translateY(-60px) translateX(-10px) rotate(180deg);
+    opacity: 0.7;
+  }
+  75% {
+    transform: translateY(-30px) translateX(-15px) rotate(270deg);
+    opacity: 0.8;
+  }
+}
+
+/* CRT Filter Animations */
+.crt-container {
+  /* transform: scale(1.04); */ /* This was causing the unwanted scrollbars */
+  overflow: hidden;
+  border-radius: 2rem;
+}
+
+@keyframes scanline-drift {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(10px);
+  }
+}
+
+.animate-scanline-drift {
+  animation: scanline-drift 30s linear infinite;
+}
+
+@keyframes glitch-flicker {
+  0%, 100% { opacity: 0; }
+  50% { opacity: 0.1; }
+}
+
+.animate-glitch-flicker {
+  animation: glitch-flicker 0.15s linear;
+}
+
+@keyframes glitch-jump {
+  0% { transform: translateY(0); }
+  33% { transform: translateY(-3px); }
+  66% { transform: translateY(3px); }
+  100% { transform: translateY(0); }
+}
+
+.animate-glitch-jump {
+  animation: glitch-jump 0.15s steps(3, end);
+}
+
+/* New, more realistic CRT Effect */
+.crt-effect {
+  position: relative;
+  animation: crt-glow 3s infinite alternate;
+}
+
+.crt-lines {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.2),
+    rgba(0, 0, 0, 0.2) 1px,
+    transparent 1px,
+    transparent 2px
+  );
+  opacity: 0.5;
+  animation: crt-flicker 0.15s infinite;
+}
+
+.crt-lines::before,
+.crt-lines::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: inherit;
+}
+
+.crt-lines::before {
+  left: 1px;
+  mix-blend-mode: screen;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(0, 255, 0, 0.15) 1px,
+    rgba(255, 0, 0, 0.15) 2px,
+    rgba(0, 0, 255, 0.15) 3px
+  );
+  animation: crt-flicker 0.1s infinite alternate;
+}
+
+.crt-lines::after {
+  left: -1px;
+  mix-blend-mode: screen;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(255, 0, 0, 0.15) 1px,
+    rgba(0, 255, 0, 0.15) 2px,
+    rgba(0, 0, 255, 0.15) 3px
+  );
+  animation: crt-flicker 0.2s infinite alternate;
+}
+
+@keyframes crt-glow {
+  from {
+    filter: brightness(1.0);
+  }
+  to {
+    filter: brightness(1.1);
+  }
+}
+
+@keyframes crt-flicker {
+  from {
+    opacity: 0.4;
+  }
+  to {
+    opacity: 0.6;
+  }
+}
+
+/* Simple, visible scanlines animation */
+@keyframes scanlines {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(4px); }
+} 
