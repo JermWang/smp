@@ -40,6 +40,35 @@ CREATE POLICY "Allow update to global_stats" ON global_stats
 
 -- Enable realtime for this table
 ALTER PUBLICATION supabase_realtime ADD TABLE global_stats;
+
+-- Create atomic increment function for better concurrent performance
+CREATE OR REPLACE FUNCTION increment_global_echoes()
+RETURNS bigint
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+DECLARE
+  new_count bigint;
+BEGIN
+  UPDATE global_stats 
+  SET total_echoes = total_echoes + 1,
+      updated_at = NOW()
+  WHERE id = 1
+  RETURNING total_echoes INTO new_count;
+  
+  -- If no row was updated, insert the initial record
+  IF new_count IS NULL THEN
+    INSERT INTO global_stats (id, total_echoes) 
+    VALUES (1, 1)
+    ON CONFLICT (id) DO UPDATE SET 
+      total_echoes = global_stats.total_echoes + 1,
+      updated_at = NOW()
+    RETURNING total_echoes INTO new_count;
+  END IF;
+  
+  RETURN new_count;
+END;
+$$;
 ```
 
 ## 4. Test

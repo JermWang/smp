@@ -4,6 +4,26 @@ export class GlobalEchoService {
   // Increment the global echo count
   static async incrementGlobalEchoes(): Promise<number | null> {
     try {
+      // Use RPC function for atomic increment (safer for concurrent users)
+      const { data, error } = await supabase
+        .rpc('increment_global_echoes')
+
+      if (error) {
+        // Fallback to manual increment if RPC fails
+        console.warn('RPC increment failed, using fallback:', error)
+        return await this.incrementGlobalEchoesFallback()
+      }
+
+      return data
+    } catch (error) {
+      console.error('Error in incrementGlobalEchoes:', error)
+      return await this.incrementGlobalEchoesFallback()
+    }
+  }
+
+  // Fallback increment method
+  private static async incrementGlobalEchoesFallback(): Promise<number | null> {
+    try {
       // First, get the current count
       const { data: currentData, error: fetchError } = await supabase
         .from('global_stats')
@@ -37,7 +57,7 @@ export class GlobalEchoService {
 
       return data.total_echoes
     } catch (error) {
-      console.error('Error in incrementGlobalEchoes:', error)
+      console.error('Error in incrementGlobalEchoesFallback:', error)
       return null
     }
   }
