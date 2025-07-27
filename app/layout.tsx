@@ -13,6 +13,11 @@ export const metadata: Metadata = {
   title: 'SMP - Sentient Memetic Proliferation',
   description: 'Angelically schizo euro techno Pudgy Penguins experience. Join the sentient memetic proliferation movement.',
   keywords: 'SMP, Sentient Memetic Proliferation, Pudgy Penguins, Crypto, Token, Euro Techno, Abstract Chain',
+  icons: {
+    icon: '/smpp.png',
+    shortcut: '/smpp.png',
+    apple: '/smpp.png',
+  },
   openGraph: {
     title: 'SMP - Sentient Memetic Proliferation',
     description: 'Angelically schizo euro techno Pudgy Penguins experience. Join the sentient memetic proliferation movement.',
