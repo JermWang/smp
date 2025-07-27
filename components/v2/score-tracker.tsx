@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from 'react';
+import { GlobalEchoService } from '@/lib/global-echo-service';
 
 interface ScoreTrackerProps {
   currentScore: number;
@@ -9,6 +10,7 @@ interface ScoreTrackerProps {
 
 export function ScoreTracker({ currentScore, onReset }: ScoreTrackerProps) {
   const [highScore, setHighScore] = useState(0);
+  const [globalEchoes, setGlobalEchoes] = useState(0);
   const [showShareModal, setShowShareModal] = useState(false);
   const [scoreCardDataUrl, setScoreCardDataUrl] = useState<string | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -19,6 +21,31 @@ export function ScoreTracker({ currentScore, onReset }: ScoreTrackerProps) {
     if (savedHighScore) {
       setHighScore(parseInt(savedHighScore));
     }
+
+    // Initialize global echo tracking
+    const initializeGlobalTracking = async () => {
+      // Get initial global count
+      const initialCount = await GlobalEchoService.getGlobalEchoCount();
+      setGlobalEchoes(initialCount);
+
+      // Subscribe to real-time updates
+      const unsubscribe = GlobalEchoService.subscribeToGlobalEchoes((newCount) => {
+        setGlobalEchoes(newCount);
+      });
+
+      // Initialize database if needed (first time setup)
+      await GlobalEchoService.initializeDatabase();
+
+      return unsubscribe;
+    };
+
+    const unsubscribePromise = initializeGlobalTracking();
+
+    return () => {
+      unsubscribePromise.then(unsubscribe => {
+        if (unsubscribe) unsubscribe();
+      });
+    };
   }, []);
 
   useEffect(() => {
@@ -156,6 +183,12 @@ export function ScoreTracker({ currentScore, onReset }: ScoreTrackerProps) {
         <div className="backdrop-blur-md bg-white/10 border border-white/20 rounded-xl px-4 py-2 min-w-[100px]">
           <div className="text-white/80 text-xs font-mono">HIGH SCORE</div>
           <div className="text-cyan-400 text-xl font-bold">{highScore}</div>
+        </div>
+        
+        {/* Global Echoes */}
+        <div className="backdrop-blur-md bg-gradient-to-r from-purple-500/20 to-pink-500/20 border border-purple-400/30 rounded-xl px-4 py-2 min-w-[100px]">
+          <div className="text-white/80 text-xs font-mono">GLOBAL ECHOES</div>
+          <div className="text-purple-300 text-xl font-bold">{globalEchoes.toLocaleString()}</div>
         </div>
         
         {/* Share Button */}

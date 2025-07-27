@@ -11,6 +11,7 @@ import { CRTFilter } from '@/components/v2/crt-filter'
 import { PudgyCursor } from '@/components/v2/pudgy-cursor'
 import { ContractAddress } from '@/components/v2/contract-address'
 import { ScoreTracker } from '@/components/v2/score-tracker'
+import { GlobalEchoService } from '@/lib/global-echo-service'
 
 export default function V2Page() {
   const [bursts, setBursts] = useState<Array<{ id: number, key: number, logoRect: DOMRect | null }>>([])
@@ -21,7 +22,7 @@ export default function V2Page() {
   const nextId = useRef(0);
 
   // This function will be triggered by the button
-  const handleBurst = useCallback(() => {
+  const handleBurst = useCallback(async () => {
     // Play the burst sound with a slight delay to separate it from the button's click sound
     setTimeout(() => {
       const audio = new Audio('/smp sound.mp3');
@@ -36,8 +37,13 @@ export default function V2Page() {
     const uniqueId = nextId.current++;
     setBursts(currentBursts => [...currentBursts, { id: uniqueId, key: uniqueId, logoRect }]);
     
-    // Increment the echo score
+    // Increment the local echo score
     setEchoScore(prev => prev + 1);
+    
+    // Increment the global echo count (async, don't wait for it)
+    GlobalEchoService.incrementGlobalEchoes().catch(e => 
+      console.error("Error incrementing global echoes:", e)
+    );
   }, [])
 
   const resetScore = useCallback(() => {
