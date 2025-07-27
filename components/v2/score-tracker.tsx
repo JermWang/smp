@@ -74,12 +74,12 @@ export function ScoreTracker({ currentScore, onReset }: ScoreTrackerProps) {
         ctx.shadowBlur = 15;
         ctx.fillText(`HIGH SCORE: ${displayHighScore}`, canvas.width / 2, 350);
         
-        // Website/branding
-        ctx.fillStyle = '#F5F5DC';
-        ctx.font = 'bold 28px Arial';
-        ctx.shadowColor = '#000000';
-        ctx.shadowBlur = 10;
-        ctx.fillText('SMP7700.com', canvas.width / 2, 420);
+                 // Website/branding
+         ctx.fillStyle = '#F5F5DC';
+         ctx.font = 'bold 28px Arial';
+         ctx.shadowColor = '#000000';
+         ctx.shadowBlur = 10;
+         ctx.fillText('SMP7700.XYZ', canvas.width / 2, 420);
         
         // Reset shadow
         ctx.shadowBlur = 0;
@@ -110,9 +110,9 @@ export function ScoreTracker({ currentScore, onReset }: ScoreTrackerProps) {
         ctx.font = 'bold 36px Arial';
         ctx.fillText(`HIGH SCORE: ${displayHighScore}`, canvas.width / 2, 350);
         
-        ctx.fillStyle = '#F5F5DC';
-        ctx.font = 'bold 28px Arial';
-        ctx.fillText('SMP7700.com', canvas.width / 2, 420);
+                 ctx.fillStyle = '#F5F5DC';
+         ctx.font = 'bold 28px Arial';
+         ctx.fillText('SMP7700.XYZ', canvas.width / 2, 420);
         
         resolve(canvas.toDataURL('image/png'));
       };
