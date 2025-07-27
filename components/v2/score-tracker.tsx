@@ -10,6 +10,7 @@ interface ScoreTrackerProps {
 export function ScoreTracker({ currentScore, onReset }: ScoreTrackerProps) {
   const [highScore, setHighScore] = useState(0);
   const [showShareModal, setShowShareModal] = useState(false);
+  const [scoreCardDataUrl, setScoreCardDataUrl] = useState<string | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -28,94 +29,106 @@ export function ScoreTracker({ currentScore, onReset }: ScoreTrackerProps) {
     }
   }, [currentScore, highScore]);
 
-  const generateScoreCard = async (score: number) => {
+  const generateScoreCard = async (score: number): Promise<string | null> => {
     const canvas = canvasRef.current;
     if (!canvas) return null;
 
     const ctx = canvas.getContext('2d');
     if (!ctx) return null;
 
-    // Set canvas size
-    canvas.width = 1200;
-    canvas.height = 630; // Twitter card ratio
+    // Set canvas size for better quality
+    canvas.width = 1500;
+    canvas.height = 500; // Using your artwork dimensions
 
-    // Create gradient background
-    const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-    gradient.addColorStop(0, '#000000');
-    gradient.addColorStop(0.5, '#1a1a2e');
-    gradient.addColorStop(1, '#000000');
-    ctx.fillStyle = gradient;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    // Add some glow effects
-    ctx.shadowColor = '#F5F5DC';
-    ctx.shadowBlur = 20;
-    
-    // Title
-    ctx.fillStyle = '#F5F5DC';
-    ctx.font = 'bold 42px Arial';
-    ctx.textAlign = 'center';
-    ctx.fillText('SENTIENT MEMETIC PROLIFERATION', canvas.width / 2, 120);
-    
-    // Reset shadow
-    ctx.shadowBlur = 0;
-    
-    // Current Score (Main highlight)
-    ctx.fillStyle = '#00ffff';
-    ctx.font = 'bold 96px Arial';
-    ctx.fillText(`${score} ECHOES`, canvas.width / 2, 250);
-    
-    // Current score label
-    ctx.fillStyle = '#F5F5DC';
-    ctx.font = '28px Arial';
-    ctx.fillText('CURRENT SESSION', canvas.width / 2, 290);
-    
-    // High Score section
-    const displayHighScore = Math.max(score, highScore);
-    ctx.fillStyle = '#FFD700'; // Gold color for high score
-    ctx.font = 'bold 48px Arial';
-    ctx.fillText(`HIGH SCORE: ${displayHighScore}`, canvas.width / 2, 380);
-    
-    // Subtitle
-    ctx.fillStyle = '#F5F5DC';
-    ctx.font = '24px Arial';
-    ctx.fillText('LAUNCHED INTO THE VOID', canvas.width / 2, 420);
-    
-    // Website
-    ctx.fillStyle = '#888888';
-    ctx.font = '20px Arial';
-    ctx.fillText('Play at SMP7700.com', canvas.width / 2, 520);
-    
-    // Add decorative elements
-    ctx.strokeStyle = '#F5F5DC';
-    ctx.lineWidth = 3;
-    ctx.beginPath();
-    ctx.rect(50, 50, canvas.width - 100, canvas.height - 100);
-    ctx.stroke();
-
-    // Add corner decorations
-    ctx.fillStyle = '#00ffff';
-    ctx.fillRect(40, 40, 20, 3);
-    ctx.fillRect(40, 40, 3, 20);
-    
-    ctx.fillRect(canvas.width - 60, 40, 20, 3);
-    ctx.fillRect(canvas.width - 43, 40, 3, 20);
-    
-    ctx.fillRect(40, canvas.height - 43, 20, 3);
-    ctx.fillRect(40, canvas.height - 60, 3, 20);
-    
-    ctx.fillRect(canvas.width - 60, canvas.height - 43, 20, 3);
-    ctx.fillRect(canvas.width - 43, canvas.height - 60, 3, 20);
-
-    return canvas.toDataURL('image/png');
+    return new Promise((resolve) => {
+      const backgroundImg = new Image();
+      backgroundImg.crossOrigin = 'anonymous';
+      backgroundImg.onload = () => {
+        // Draw the background artwork
+        ctx.drawImage(backgroundImg, 0, 0, canvas.width, canvas.height);
+        
+        // Add dark overlay for text readability
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        // Current Score (Main highlight) - Larger and more prominent
+        ctx.fillStyle = '#00ffff';
+        ctx.font = 'bold 120px Arial';
+        ctx.textAlign = 'center';
+        ctx.shadowColor = '#00ffff';
+        ctx.shadowBlur = 30;
+        ctx.fillText(`${score}`, canvas.width / 2, 200);
+        
+        // "ECHOES" label
+        ctx.fillStyle = '#F5F5DC';
+        ctx.font = 'bold 60px Arial';
+        ctx.shadowColor = '#F5F5DC';
+        ctx.shadowBlur = 20;
+        ctx.fillText('ECHOES LAUNCHED', canvas.width / 2, 270);
+        
+        // High Score section
+        const displayHighScore = Math.max(score, highScore);
+        ctx.fillStyle = '#FFD700';
+        ctx.font = 'bold 36px Arial';
+        ctx.shadowColor = '#FFD700';
+        ctx.shadowBlur = 15;
+        ctx.fillText(`HIGH SCORE: ${displayHighScore}`, canvas.width / 2, 350);
+        
+        // Website/branding
+        ctx.fillStyle = '#F5F5DC';
+        ctx.font = 'bold 28px Arial';
+        ctx.shadowColor = '#000000';
+        ctx.shadowBlur = 10;
+        ctx.fillText('SMP7700.com', canvas.width / 2, 420);
+        
+        // Reset shadow
+        ctx.shadowBlur = 0;
+        
+        resolve(canvas.toDataURL('image/png'));
+      };
+      backgroundImg.onerror = () => {
+        // Fallback to gradient background if image fails
+        const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+        gradient.addColorStop(0, '#000000');
+        gradient.addColorStop(0.5, '#1a1a2e');
+        gradient.addColorStop(1, '#000000');
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        // Add the same text as above
+        ctx.fillStyle = '#00ffff';
+        ctx.font = 'bold 120px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText(`${score}`, canvas.width / 2, 200);
+        
+        ctx.fillStyle = '#F5F5DC';
+        ctx.font = 'bold 60px Arial';
+        ctx.fillText('ECHOES LAUNCHED', canvas.width / 2, 270);
+        
+        const displayHighScore = Math.max(score, highScore);
+        ctx.fillStyle = '#FFD700';
+        ctx.font = 'bold 36px Arial';
+        ctx.fillText(`HIGH SCORE: ${displayHighScore}`, canvas.width / 2, 350);
+        
+        ctx.fillStyle = '#F5F5DC';
+        ctx.font = 'bold 28px Arial';
+        ctx.fillText('SMP7700.com', canvas.width / 2, 420);
+        
+        resolve(canvas.toDataURL('image/png'));
+      };
+      backgroundImg.src = '/1500x500.jpg';
+    });
   };
 
   const handleShare = async () => {
+    // Generate the score card immediately when share is clicked
+    const dataUrl = await generateScoreCard(currentScore);
+    setScoreCardDataUrl(dataUrl);
     setShowShareModal(true);
   };
 
   const downloadScoreCard = async () => {
-    const dataUrl = await generateScoreCard(currentScore);
+    const dataUrl = scoreCardDataUrl || await generateScoreCard(currentScore);
     if (dataUrl) {
       const link = document.createElement('a');
       link.download = `smp-score-${currentScore}.png`;
@@ -156,36 +169,59 @@ export function ScoreTracker({ currentScore, onReset }: ScoreTrackerProps) {
         )}
       </div>
 
-      {/* Share Modal */}
+      {/* Share Modal with Live Preview */}
       {showShareModal && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[200] flex items-center justify-center p-4">
-          <div className="backdrop-blur-md bg-white/10 border border-white/20 rounded-2xl p-6 max-w-md w-full mx-4">
-            <h3 className="text-white text-xl font-bold mb-4 text-center">Share Your Score!</h3>
-            <div className="text-center mb-6">
-              <div className="text-cyan-400 text-4xl font-bold">{currentScore}</div>
-              <div className="text-white/80 text-sm">Echoes Launched</div>
+        <div className="fixed inset-0 bg-black/90 backdrop-blur-sm z-[200] flex items-center justify-center p-4">
+          <div className="backdrop-blur-md bg-white/10 border border-white/20 rounded-2xl p-6 max-w-4xl w-full mx-4">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-white text-2xl font-bold">Share Your Score!</h3>
+              <button
+                onClick={() => setShowShareModal(false)}
+                className="text-white/60 hover:text-white text-2xl"
+              >
+                ×
+              </button>
             </div>
             
-            <div className="flex flex-col space-y-3">
+            {/* Live Preview of Score Card */}
+            <div className="mb-6">
+              <div className="text-white/80 text-sm mb-3 text-center">Preview:</div>
+              {scoreCardDataUrl ? (
+                <div className="flex justify-center">
+                  <img 
+                    src={scoreCardDataUrl} 
+                    alt="Score Card Preview" 
+                    className="max-w-full h-auto rounded-xl border border-white/20 shadow-2xl"
+                    style={{ maxHeight: '300px' }}
+                  />
+                </div>
+              ) : (
+                <div className="flex justify-center items-center h-40">
+                  <div className="text-white/60">Generating preview...</div>
+                </div>
+              )}
+            </div>
+            
+            {/* Action Buttons */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <button
                 onClick={shareToTwitter}
-                className="bg-blue-500 hover:bg-blue-600 text-white rounded-xl px-4 py-3 font-medium transition-colors"
+                className="bg-blue-500 hover:bg-blue-600 text-white rounded-xl px-6 py-4 font-medium transition-colors flex items-center justify-center gap-2"
               >
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 1200 1227">
+                  <path d="M714.163 519.284L1160.89 0H1055.03L667.137 450.887L357.328 0H0L468.492 681.821L0 1226.37H105.866L515.491 750.218L842.672 1226.37H1200L714.137 519.284H714.163ZM569.165 687.828L521.697 619.934L144.011 79.6944H306.615L611.412 515.685L658.88 583.579L1055.08 1150.3H892.476L569.165 687.854V687.828Z"/>
+                </svg>
                 Share on Twitter
               </button>
               
               <button
                 onClick={downloadScoreCard}
-                className="bg-purple-500 hover:bg-purple-600 text-white rounded-xl px-4 py-3 font-medium transition-colors"
+                className="bg-purple-500 hover:bg-purple-600 text-white rounded-xl px-6 py-4 font-medium transition-colors flex items-center justify-center gap-2"
               >
-                Download Score Card
-              </button>
-              
-              <button
-                onClick={() => setShowShareModal(false)}
-                className="border border-white/20 text-white/80 hover:text-white rounded-xl px-4 py-3 font-medium transition-colors"
-              >
-                Close
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                Download Card
               </button>
             </div>
           </div>

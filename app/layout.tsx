@@ -41,14 +41,16 @@ export const metadata: Metadata = {
   },
 }
 
-export default function V2Layout({
+export default function RootLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
   return (
-    <div className={`h-screen bg-black ${heavitas.variable}`}>
-      {children}
-    </div>
+    <html lang="en" className={heavitas.variable}>
+      <body className="h-screen bg-black overflow-hidden">
+        {children}
+      </body>
+    </html>
   )
 } 

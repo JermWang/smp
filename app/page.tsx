@@ -54,7 +54,7 @@ export default function V2Page() {
       {/* Mute Toggle Button */}
       <button
         onClick={() => setIsMelodyMuted(!isMelodyMuted)}
-        className="absolute top-4 right-4 z-50 text-white p-2 bg-black/50 rounded-full hover:bg-white/20 transition-colors"
+        className="absolute top-20 right-4 z-[60] text-white p-2 bg-black/50 rounded-full hover:bg-white/20 transition-colors"
         aria-label="Toggle melody mute"
       >
         {isMelodyMuted ? (
@@ -137,7 +137,7 @@ export default function V2Page() {
             <div
               className="relative"
               style={{
-                animation: `echo-expand-2d 2s ease-out forwards`,
+                animation: `echo-expand-2d 2s linear forwards`,
                 width: '150px',
                 height: '150px',
               }}
