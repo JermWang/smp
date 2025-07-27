@@ -20,7 +20,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: 'SMP - Sentient Memetic Proliferation',
-    description: 'Angelically schizo euro techno Pudgy Penguins experience. Join the sentient memetic proliferation movement.',
+    description: 'Sentient Memetic Proliferation',
     images: [
       {
         url: '/1500x500.jpg',
@@ -35,7 +35,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'SMP - Sentient Memetic Proliferation',
-    description: 'Angelically schizo euro techno Pudgy Penguins experience. Join the sentient memetic proliferation movement.',
+    description: 'Sentient Memetic Proliferation',
     images: ['/1500x500.jpg'],
     creator: '@SMP7700',
   },

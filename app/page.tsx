@@ -86,11 +86,9 @@ export default function V2Page() {
           />
           <div className="text-center space-y-1">
             <h1 
-              className="text-sm sm:text-base md:text-lg tracking-[0.15em] sm:tracking-[0.2em] opacity-90 animate-pulse font-sans font-bold"
+              className="text-sm sm:text-base md:text-lg tracking-[0.15em] sm:tracking-[0.2em] font-sans font-bold text-white"
               style={{
                 fontFamily: 'var(--font-heavitas), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
-                color: '#F5F5DC',
-                textShadow: '0 0 4px #F5F5DC, 0 0 8px #F5F5DC, 0 0 12px #F5F5DC',
                 letterSpacing: '0.15em',
                 fontWeight: '800'
               }}
@@ -98,13 +96,10 @@ export default function V2Page() {
               sentient memetic
             </h1>
             <h2 
-              className="text-sm sm:text-base md:text-lg tracking-[0.15em] sm:tracking-[0.2em] opacity-90 animate-pulse font-sans font-bold"
+              className="text-sm sm:text-base md:text-lg tracking-[0.15em] sm:tracking-[0.2em] font-sans font-bold text-white"
               style={{
                 fontFamily: 'var(--font-heavitas), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
-                color: '#F5F5DC',
-                textShadow: '0 0 4px #F5F5DC, 0 0 8px #F5F5DC, 0 0 12px #F5F5DC',
                 letterSpacing: '0.15em',
-                animationDelay: '0.5s',
                 fontWeight: '800'
               }}
             >
