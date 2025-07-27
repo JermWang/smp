@@ -1,54 +1,54 @@
-"use client"
+"use client";
 
-import Image from 'next/image'
-
-const banners = [
-  "/SMP7700.gif",
-  "/SMP7700 2.gif",
-  "/SMP7700 3.gif",
-  "/SMP7700 4.gif",
-  "/SMP7700 5.gif",
-]
+import React from 'react';
+import Image from 'next/image';
 
 interface ScrollingBannerProps {
-  direction?: 'left' | 'right'
+  direction: 'left' | 'right';
 }
 
-export function ScrollingBanner({ direction = 'left' }: ScrollingBannerProps) {
-  const duration = 80 // Slower for more content
-  const animationName = direction === 'left' ? 'scroll-left' : 'scroll-right'
-  
-  // Repeat banners to create a long track that's wider than any screen
-  const longTrackOfBanners = Array(5).fill(banners).flat()
+export function ScrollingBanner({ direction }: ScrollingBannerProps) {
+  const bannerImages = [
+    '/SMP7700.gif',
+    '/SMP7700 2.gif', 
+    '/SMP7700 3.gif',
+    '/SMP7700 4.gif',
+    '/SMP7700 5.gif'
+  ];
 
-  const Track = () => (
-    <div className="flex flex-shrink-0 items-center justify-start">
-      {longTrackOfBanners.map((banner, index) => (
-        <div key={index} className="flex-shrink-0 mx-2">
-          <Image
-            src={banner}
-            alt={`Scrolling banner ${index + 1}`}
-            width={150}
-            height={50}
-            unoptimized
-            className="max-w-none"
-          />
-        </div>
-      ))}
-    </div>
-  );
+  // Create a long seamless track by repeating the images many times
+  const seamlessTrack = Array(10).fill(bannerImages).flat();
+  const animationClass = direction === 'left' ? 'animate-scroll-left-seamless' : 'animate-scroll-right-seamless';
 
   return (
-    <div className="w-full overflow-hidden pointer-events-none z-50 py-2">
-      <div 
-        className="flex"
-        style={{
-          animation: `${animationName} ${duration}s linear infinite`,
-        }}
-      >
-        <Track />
-        <Track />
+    <div 
+      style={{ 
+        width: '100%',
+        height: '48px', // Fixed height instead of responsive
+        overflow: 'hidden',
+        background: 'linear-gradient(to right, transparent, rgba(0,0,0,0.2), transparent)',
+        margin: '0', 
+        padding: '0', 
+        lineHeight: '0',
+        fontSize: '0',
+        display: 'block',
+        position: 'relative'
+      }}
+    >
+      <div className={`flex ${animationClass} h-full`} style={{ margin: '0', padding: '0' }}>
+        {seamlessTrack.map((src, index) => (
+          <Image
+            key={index}
+            src={src}
+            alt={`Banner ${index + 1}`}
+            width={120}
+            height={40}
+            className="mx-1 sm:mx-2 w-20 h-8 sm:w-24 sm:h-10 md:w-[120px] md:h-[40px] object-cover flex-shrink-0"
+            unoptimized
+            style={{ margin: '0 4px', display: 'block' }}
+          />
+        ))}
       </div>
     </div>
-  )
+  );
 } 

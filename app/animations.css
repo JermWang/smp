@@ -3,16 +3,15 @@
 @keyframes echo-expand-2d {
   0% {
     opacity: 0;
-    width: 150px;
-    height: 150px;
+    transform: scale(0.1);
   }
   50% {
     opacity: 0.6;
+    transform: scale(0.5);
   }
   100% {
     opacity: 0;
-    width: 100vmin;
-    height: 100vmin;
+    transform: scale(8);
   }
 }
 
@@ -38,6 +37,51 @@
 @keyframes scroll-right {
   0% { transform: translateX(-100%); }
   100% { transform: translateX(0); }
+}
+
+@keyframes scroll-left-seamless {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-20%); }
+}
+
+@keyframes scroll-right-seamless {
+  0% { transform: translateX(-20%); }
+  100% { transform: translateX(0); }
+}
+
+.animate-scroll-left {
+  animation: scroll-left 60s linear infinite;
+}
+
+.animate-scroll-right {
+  animation: scroll-right 60s linear infinite;
+}
+
+.animate-scroll-left-seamless {
+  animation: scroll-left-seamless 25s linear infinite;
+}
+
+.animate-scroll-right-seamless {
+  animation: scroll-right-seamless 25s linear infinite;
+}
+
+/* Mobile optimized speeds */
+@media (max-width: 640px) {
+  .animate-scroll-left {
+    animation: scroll-left 45s linear infinite;
+  }
+  
+  .animate-scroll-right {
+    animation: scroll-right 45s linear infinite;
+  }
+  
+  .animate-scroll-left-seamless {
+    animation: scroll-left-seamless 20s linear infinite;
+  }
+  
+  .animate-scroll-right-seamless {
+    animation: scroll-right-seamless 20s linear infinite;
+  }
 }
 
 /* Added from original concentric-echo component */
@@ -96,7 +140,6 @@
 .crt-container {
   /* transform: scale(1.04); */ /* This was causing the unwanted scrollbars */
   overflow: hidden;
-  border-radius: 2rem;
 }
 
 @keyframes scanline-drift {

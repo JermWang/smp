@@ -65,7 +65,7 @@ export function SocialLinks() {
         <TwitterIcon />
       </a>
       <a 
-        href="https://dexscreener.com/solana/hza1uxa92bdtsoag6q9vgyazk282ybp5ymdaazz2tff4" 
+        href="https://dexscreener.com/abstract/0xe0f1fed1871bca12aea16ef7de4ed0e69eed448b" 
         target="_blank" 
         rel="noopener noreferrer" 
         aria-label={glitchedDexText}

@@ -22,7 +22,7 @@ export function CRTFilter() {
   }, []);
 
   return (
-    <div className="absolute inset-0 z-[100] pointer-events-none overflow-hidden rounded-[2rem]">
+    <div className="absolute inset-0 z-[100] pointer-events-none overflow-hidden">
       {/* Simple, visible scanlines */}
       <div 
         className="absolute inset-0 opacity-20"

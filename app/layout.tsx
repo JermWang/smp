@@ -1,31 +1,54 @@
+import "./globals.css"
+import "./animations.css"
 import type { Metadata } from 'next'
-import { GeistSans } from 'geist/font/sans'
-import { GeistMono } from 'geist/font/mono'
-import './globals.css'
+import localFont from 'next/font/local'
+
+const heavitas = localFont({
+  src: '../public/Heavitas.ttf',
+  variable: '--font-heavitas',
+  display: 'swap',
+})
 
 export const metadata: Metadata = {
-  title: 'v0 App',
-  description: 'Created with v0',
-  generator: 'v0.dev',
+  title: 'SMP - Sentient Memetic Proliferation',
+  description: 'Angelically schizo euro techno Pudgy Penguins experience. Join the sentient memetic proliferation movement.',
+  keywords: 'SMP, Sentient Memetic Proliferation, Pudgy Penguins, Crypto, Token, Euro Techno, Abstract Chain',
+  openGraph: {
+    title: 'SMP - Sentient Memetic Proliferation',
+    description: 'Angelically schizo euro techno Pudgy Penguins experience. Join the sentient memetic proliferation movement.',
+    images: [
+      {
+        url: '/1500x500.jpg',
+        width: 1500,
+        height: 500,
+        alt: 'SMP - Sentient Memetic Proliferation',
+      },
+    ],
+    siteName: 'SMP',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'SMP - Sentient Memetic Proliferation',
+    description: 'Angelically schizo euro techno Pudgy Penguins experience. Join the sentient memetic proliferation movement.',
+    images: ['/1500x500.jpg'],
+    creator: '@SMP7700',
+  },
+  other: {
+    // Discord and Telegram will use Open Graph tags
+    'og:image:width': '1500',
+    'og:image:height': '500',
+  },
 }
 
-export default function RootLayout({
+export default function V2Layout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode
-}>) {
+}) {
   return (
-    <html lang="en">
-      <head>
-        <style>{`
-html {
-  font-family: ${GeistSans.style.fontFamily};
-  --font-sans: ${GeistSans.variable};
-  --font-mono: ${GeistMono.variable};
-}
-        `}</style>
-      </head>
-      <body>{children}</body>
-    </html>
+    <div className={`h-screen bg-black ${heavitas.variable}`}>
+      {children}
+    </div>
   )
-}
+} 
