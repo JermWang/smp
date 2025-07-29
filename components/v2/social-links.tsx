@@ -15,12 +15,10 @@ const DexScreenerIcon = () => (
 );
 
 const MemeDepotIcon = () => (
-  <svg role="img" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" className="w-6 h-6">
-    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2zm0 2v12h16V6H4z"/>
-    <path d="M8.5 13.5l2.5 3 3.5-4.5 4.5 6H5l3.5-4.5z"/>
-    <circle cx="9.5" cy="9.5" r="1.5"/>
-    <path d="M16 2h2v2h-2zM18 4h2v2h-2zM20 6h2v2h-2z"/>
-  </svg>
+  <div className="text-xs font-bold leading-tight text-center">
+    <div>MEME</div>
+    <div>DEPOT</div>
+  </div>
 );
 
 const scrambleText = (originalText: string) => {
