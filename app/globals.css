@@ -454,26 +454,11 @@
   will-change: opacity, filter;
 }
 
-/* Neon Green Cursor */
+/* Simple Neon Green Cursor */
 * {
   cursor: none !important;
 }
 
-.neon-cursor {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 12px;
-  height: 12px;
-  background: #00ff00;
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 9999;
-  mix-blend-mode: difference;
-  box-shadow: 
-    0 0 10px #00ff00,
-    0 0 20px #00ff00,
-    0 0 30px #00ff00;
-  transform: translate(-50%, -50%);
-  will-change: transform;
+body {
+  cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6" fill="%2300ff00" stroke="%2300ff00" stroke-width="2" filter="url(%23glow)"/><defs><filter id="glow"><feGaussianBlur stdDeviation="2" result="coloredBlur"/><feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs></svg>') 8 8, auto !important;
 }

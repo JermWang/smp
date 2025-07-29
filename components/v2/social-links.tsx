@@ -11,19 +11,28 @@ const TwitterIcon = () => (
 );
 
 const DexScreenerIcon = () => (
-    <img src="/dexscreenr.png" alt="DexScreener" className="w-6 h-6" />
+    <img src="/dexscreenr.png" alt="DexScreener" className="w-6 h-6 object-contain" />
 );
 
-// Function to scramble text for glitch effect
-const scrambleText = (text: string) => {
-  const chars = '!@#$%^&*()[]{}|;:,.<>?~`';
-  return text.split('').map(() => chars[Math.floor(Math.random() * chars.length)]).join('');
+const MemeDepotIcon = () => (
+  <svg role="img" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" className="w-6 h-6">
+    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2zm0 2v12h16V6H4z"/>
+    <path d="M8.5 13.5l2.5 3 3.5-4.5 4.5 6H5l3.5-4.5z"/>
+    <circle cx="9.5" cy="9.5" r="1.5"/>
+    <path d="M16 2h2v2h-2zM18 4h2v2h-2zM20 6h2v2h-2z"/>
+  </svg>
+);
+
+const scrambleText = (originalText: string) => {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()';
+  return originalText.split('').map(() => chars[Math.floor(Math.random() * chars.length)]).join('');
 };
 
 export function SocialLinks() {
   const [isGlitching, setIsGlitching] = useState(false);
   const [glitchedTwitterText, setGlitchedTwitterText] = useState("Follow us on X");
   const [glitchedDexText, setGlitchedDexText] = useState("View on DexScreener");
+  const [glitchedMemeText, setGlitchedMemeText] = useState("Get Memes");
 
   useEffect(() => {
     let glitchTimeout: NodeJS.Timeout;
@@ -34,11 +43,13 @@ export function SocialLinks() {
       // Scramble the text
       setGlitchedTwitterText(scrambleText("Follow us on X"));
       setGlitchedDexText(scrambleText("View on DexScreener"));
+      setGlitchedMemeText(scrambleText("Get Memes"));
       
       // Return to normal after 200ms
       setTimeout(() => {
         setGlitchedTwitterText("Follow us on X");
         setGlitchedDexText("View on DexScreener");
+        setGlitchedMemeText("Get Memes");
         setIsGlitching(false);
       }, 200);
 
@@ -72,6 +83,15 @@ export function SocialLinks() {
         className={`text-white hover:text-white/80 transition-colors ${isGlitching ? 'animate-pulse' : ''}`}
       >
         <DexScreenerIcon />
+      </a>
+      <a 
+        href="https://memedepot.com/d/smp-7700" 
+        target="_blank" 
+        rel="noopener noreferrer" 
+        aria-label={glitchedMemeText}
+        className={`text-white hover:text-white/80 transition-colors ${isGlitching ? 'animate-pulse' : ''}`}
+      >
+        <MemeDepotIcon />
       </a>
     </div>
   );
