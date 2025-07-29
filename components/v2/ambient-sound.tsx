@@ -21,7 +21,7 @@ export function AmbientSound({ isMelodyMuted }: AmbientSoundProps) {
   useEffect(() => {
     // Initialize audio elements once
     if (!melodyRef.current) {
-      melodyRef.current = new Audio('/melodic-techno-melody-v2-248886.mp3');
+      melodyRef.current = new Audio('/Sentient Memetic Proliferation.mp3');
       melodyRef.current.loop = true;
       melodyRef.current.volume = 0.3;
     }
