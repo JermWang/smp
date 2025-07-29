@@ -454,11 +454,4 @@
   will-change: opacity, filter;
 }
 
-/* Simple Neon Green Cursor */
-* {
-  cursor: none !important;
-}
 
-body {
-  cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6" fill="%2300ff00" stroke="%2300ff00" stroke-width="2" filter="url(%23glow)"/><defs><filter id="glow"><feGaussianBlur stdDeviation="2" result="coloredBlur"/><feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs></svg>') 8 8, auto !important;
-}
