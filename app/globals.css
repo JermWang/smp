@@ -453,3 +453,27 @@
 .grid-element {
   will-change: opacity, filter;
 }
+
+/* Neon Green Cursor */
+* {
+  cursor: none !important;
+}
+
+.neon-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 12px;
+  height: 12px;
+  background: #00ff00;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  mix-blend-mode: difference;
+  box-shadow: 
+    0 0 10px #00ff00,
+    0 0 20px #00ff00,
+    0 0 30px #00ff00;
+  transform: translate(-50%, -50%);
+  will-change: transform;
+}

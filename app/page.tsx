@@ -8,7 +8,7 @@ import { RotatingSpace } from '@/components/v2/rotating-space'
 import { AmbientSound } from '@/components/v2/ambient-sound'
 import { SocialLinks } from '@/components/v2/social-links'
 import { CRTFilter } from '@/components/v2/crt-filter'
-
+import { NeonCursor } from '@/components/v2/neon-cursor'
 import { ContractAddress } from '@/components/v2/contract-address'
 import { ScoreTracker } from '@/components/v2/score-tracker'
 import { GlobalEchoService } from '@/lib/global-echo-service'
@@ -52,6 +52,7 @@ export default function V2Page() {
 
   return (
     <main className="relative w-full h-screen bg-black overflow-hidden">
+      <NeonCursor />
       <CRTFilter />
       <AmbientSound isMelodyMuted={isMelodyMuted} />
       <ScoreTracker currentScore={echoScore} onReset={resetScore} />
