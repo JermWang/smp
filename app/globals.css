@@ -454,4 +454,9 @@
   will-change: opacity, filter;
 }
 
+/* Custom Cursor - mua-muah.gif */
+* {
+  cursor: url('/mua-muah.gif'), auto !important;
+}
+
 
