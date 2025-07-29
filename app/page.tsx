@@ -11,12 +11,14 @@ import { CRTFilter } from '@/components/v2/crt-filter'
 
 import { ContractAddress } from '@/components/v2/contract-address'
 import { ScoreTracker } from '@/components/v2/score-tracker'
+import { TerminalIntro } from '@/components/v2/terminal-intro'
 import { GlobalEchoService } from '@/lib/global-echo-service'
 
 export default function V2Page() {
   const [bursts, setBursts] = useState<Array<{ id: number, key: number, logoRect: DOMRect | null }>>([])
   const [isMelodyMuted, setIsMelodyMuted] = useState(false);
   const [echoScore, setEchoScore] = useState(0);
+  const [showTerminal, setShowTerminal] = useState(true);
   const logoRef = useRef<HTMLImageElement>(null);
   // Use a ref for the ID to avoid stale state issues on rapid clicks
   const nextId = useRef(0);
@@ -49,6 +51,15 @@ export default function V2Page() {
   const resetScore = useCallback(() => {
     setEchoScore(0);
   }, []);
+
+  const handleTerminalComplete = useCallback(() => {
+    setShowTerminal(false);
+  }, []);
+
+  // Show terminal intro first
+  if (showTerminal) {
+    return <TerminalIntro onComplete={handleTerminalComplete} />;
+  }
 
   return (
     <main className="relative w-full h-screen bg-black overflow-hidden">
