@@ -178,7 +178,9 @@ export default function V2Page() {
       <div className="absolute inset-0 pointer-events-none flex flex-col items-center justify-end pb-20 sm:pb-8">
         <div className="flex flex-col items-center pointer-events-auto space-y-3 sm:space-y-4">
           <SocialLinks />
-          <PhotoshopButton onButtonClick={handleBurst} />
+          <div className="-mt-12 sm:mt-0">
+            <PhotoshopButton onButtonClick={handleBurst} />
+          </div>
         </div>
       </div>
 
