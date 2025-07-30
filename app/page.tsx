@@ -62,7 +62,7 @@ export default function V2Page() {
   }
 
   return (
-    <main className="relative w-full h-screen bg-black overflow-hidden">
+    <main className="relative w-full h-screen min-h-screen bg-black overflow-hidden">
       <CRTFilter />
       <AmbientSound isMelodyMuted={isMelodyMuted} />
       <ScoreTracker currentScore={echoScore} onReset={resetScore} />
@@ -70,7 +70,7 @@ export default function V2Page() {
       {/* Mute Toggle Button */}
       <button
         onClick={() => setIsMelodyMuted(!isMelodyMuted)}
-        className="absolute top-20 right-4 z-[60] text-white p-2 bg-black/50 rounded-full hover:bg-white/20 transition-colors"
+        className="absolute top-16 sm:top-20 right-4 z-[60] text-white p-2 bg-black/50 rounded-full hover:bg-white/20 transition-colors"
         aria-label="Toggle melody mute"
       >
         {isMelodyMuted ? (
@@ -81,7 +81,7 @@ export default function V2Page() {
       </button>
 
       {/* Top Banner */}
-      <div className="absolute top-0 left-0 w-full z-50">
+      <div className="absolute top-0 left-0 w-full z-50 safe-top">
         <ScrollingBanner direction="left" />
       </div>
 
@@ -210,6 +210,7 @@ export default function V2Page() {
           margin: 0 !important;
           padding: 0 !important;
           height: 100vh !important;
+          height: 100dvh !important; /* Dynamic viewport height for mobile */
           overflow: hidden !important;
         }
         
@@ -217,6 +218,20 @@ export default function V2Page() {
           margin: 0 !important;
           padding: 0 !important;
           position: relative !important;
+          height: 100vh !important;
+          height: 100dvh !important; /* Dynamic viewport height for mobile */
+        }
+        
+        /* Mobile viewport fixes */
+        @media (max-width: 768px) {
+          html, body, main {
+            height: 100vh !important;
+            height: 100svh !important; /* Small viewport height for mobile */
+          }
+          
+          .safe-top {
+            padding-top: env(safe-area-inset-top, 0);
+          }
         }
         
         /* Force the banner container to have no spacing */
