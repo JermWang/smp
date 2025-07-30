@@ -175,12 +175,10 @@ export default function V2Page() {
       })}
       
       {/* UI Controls */}
-      <div className="absolute inset-0 pointer-events-none flex flex-col items-center justify-end pb-20 sm:pb-8">
+      <div className="absolute inset-0 pointer-events-none flex flex-col items-center justify-end pb-32 md:pb-8">
         <div className="flex flex-col items-center pointer-events-auto space-y-3 sm:space-y-4">
           <SocialLinks />
-          <div className="-mt-16 md:mt-0">
-            <PhotoshopButton onButtonClick={handleBurst} />
-          </div>
+          <PhotoshopButton onButtonClick={handleBurst} />
         </div>
       </div>
 
