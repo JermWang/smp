@@ -1,11 +1,21 @@
-import { supabase } from './supabase'
+import { supabase, isSupabaseConfigured } from './supabase'
 
 export class GlobalEchoService {
+  // Check if service is available
+  static isAvailable(): boolean {
+    return isSupabaseConfigured && supabase !== null
+  }
+
   // Increment the global echo count
   static async incrementGlobalEchoes(): Promise<number | null> {
+    if (!this.isAvailable()) {
+      console.warn('Supabase not configured, skipping global echo increment')
+      return null
+    }
+
     try {
       // Use RPC function for atomic increment (safer for concurrent users)
-      const { data, error } = await supabase
+      const { data, error } = await supabase!
         .rpc('increment_global_echoes')
 
       if (error) {
@@ -23,9 +33,13 @@ export class GlobalEchoService {
 
   // Fallback increment method
   private static async incrementGlobalEchoesFallback(): Promise<number | null> {
+    if (!this.isAvailable()) {
+      return null
+    }
+
     try {
       // First, get the current count
-      const { data: currentData, error: fetchError } = await supabase
+      const { data: currentData, error: fetchError } = await supabase!
         .from('global_stats')
         .select('total_echoes')
         .eq('id', 1)
@@ -40,7 +54,7 @@ export class GlobalEchoService {
       const newCount = currentCount + 1
 
       // Update the count
-      const { data, error } = await supabase
+      const { data, error } = await supabase!
         .from('global_stats')
         .upsert({ 
           id: 1, 
@@ -64,8 +78,12 @@ export class GlobalEchoService {
 
   // Get current global echo count
   static async getGlobalEchoCount(): Promise<number> {
+    if (!this.isAvailable()) {
+      return 0
+    }
+
     try {
-      const { data, error } = await supabase
+      const { data, error } = await supabase!
         .from('global_stats')
         .select('total_echoes')
         .eq('id', 1)
@@ -85,7 +103,12 @@ export class GlobalEchoService {
 
   // Subscribe to real-time updates
   static subscribeToGlobalEchoes(callback: (count: number) => void) {
-    const channel = supabase
+    if (!this.isAvailable()) {
+      console.warn('Supabase not configured, real-time updates disabled')
+      return () => {} // Return empty unsubscribe function
+    }
+
+    const channel = supabase!
       .channel('global_stats_changes')
       .on(
         'postgres_changes',
@@ -104,14 +127,19 @@ export class GlobalEchoService {
       .subscribe()
 
     return () => {
-      supabase.removeChannel(channel)
+      supabase!.removeChannel(channel)
     }
   }
 
   // Initialize the database (call this once)
   static async initializeDatabase(): Promise<void> {
+    if (!this.isAvailable()) {
+      console.warn('Supabase not configured, skipping database initialization')
+      return
+    }
+
     try {
-      const { error } = await supabase
+      const { error } = await supabase!
         .from('global_stats')
         .upsert({ 
           id: 1, 
