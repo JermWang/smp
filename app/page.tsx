@@ -22,14 +22,24 @@ export default function V2Page() {
   const logoRef = useRef<HTMLImageElement>(null);
   // Use a ref for the ID to avoid stale state issues on rapid clicks
   const nextId = useRef(0);
+  const audioTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // This function will be triggered by the button
   const handleBurst = useCallback(async () => {
+    // Clear any existing audio timeout to prevent overlapping
+    if (audioTimeoutRef.current) {
+      clearTimeout(audioTimeoutRef.current);
+    }
+
     // Play the burst sound with a slight delay to separate it from the button's click sound
-    setTimeout(() => {
-      const audio = new Audio('/smp sound.mp3');
-      audio.volume = 1.0; // Set volume to maximum (100%)
-      audio.play().catch(e => console.error("Error playing audio:", e));
+    audioTimeoutRef.current = setTimeout(() => {
+      try {
+        const audio = new Audio('/smp sound.mp3');
+        audio.volume = 1.0; // Set volume to maximum (100%)
+        audio.play().catch(e => console.error("Error playing audio:", e));
+      } catch (error) {
+        console.error("Error creating audio:", error);
+      }
     }, 100); // 100ms delay
 
     // Get the current logo position
@@ -37,7 +47,16 @@ export default function V2Page() {
 
     // Create a single, powerful burst
     const uniqueId = nextId.current++;
-    setBursts(currentBursts => [...currentBursts, { id: uniqueId, key: uniqueId, logoRect }]);
+    const newBurst = { id: uniqueId, key: uniqueId, logoRect };
+    
+    setBursts(currentBursts => {
+      // Limit the number of concurrent bursts to prevent memory issues
+      const maxBursts = 10;
+      const updatedBursts = [...currentBursts, newBurst];
+      return updatedBursts.length > maxBursts 
+        ? updatedBursts.slice(-maxBursts) 
+        : updatedBursts;
+    });
     
     // Increment the local echo score
     setEchoScore(prev => prev + 1);
@@ -54,6 +73,15 @@ export default function V2Page() {
 
   const handleTerminalComplete = useCallback(() => {
     setShowTerminal(false);
+  }, []);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (audioTimeoutRef.current) {
+        clearTimeout(audioTimeoutRef.current);
+      }
+    };
   }, []);
 
   // Show terminal intro first

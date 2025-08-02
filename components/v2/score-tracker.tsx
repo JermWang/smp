@@ -65,102 +65,214 @@ export function ScoreTracker({ currentScore, onReset }: ScoreTrackerProps) {
 
     // Set canvas size for better quality
     canvas.width = 1500;
-    canvas.height = 500; // Using your artwork dimensions
+    canvas.height = 500;
 
     return new Promise((resolve) => {
       const backgroundImg = new Image();
       backgroundImg.crossOrigin = 'anonymous';
+      
       backgroundImg.onload = () => {
-        // Draw the background artwork
-        ctx.drawImage(backgroundImg, 0, 0, canvas.width, canvas.height);
-        
-        // Add dark overlay for text readability
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        
-        // Current Score (Main highlight) - Larger and more prominent
-        ctx.fillStyle = '#00ffff';
-        ctx.font = 'bold 120px Arial';
-        ctx.textAlign = 'center';
-        ctx.shadowColor = '#00ffff';
-        ctx.shadowBlur = 30;
-        ctx.fillText(`${score}`, canvas.width / 2, 200);
-        
-        // "ECHOES" label
-        ctx.fillStyle = '#F5F5DC';
-        ctx.font = 'bold 60px Arial';
-        ctx.shadowColor = '#F5F5DC';
-        ctx.shadowBlur = 20;
-        ctx.fillText('ECHOES LAUNCHED', canvas.width / 2, 270);
-        
-        // High Score section
-        const displayHighScore = Math.max(score, highScore);
-        ctx.fillStyle = '#FFD700';
-        ctx.font = 'bold 36px Arial';
-        ctx.shadowColor = '#FFD700';
-        ctx.shadowBlur = 15;
-        ctx.fillText(`HIGH SCORE: ${displayHighScore}`, canvas.width / 2, 350);
-        
-                 // Website/branding
-         ctx.fillStyle = '#F5F5DC';
-         ctx.font = 'bold 28px Arial';
-         ctx.shadowColor = '#000000';
-         ctx.shadowBlur = 10;
-         ctx.fillText('SMP7700.XYZ', canvas.width / 2, 420);
-        
-        // Reset shadow
-        ctx.shadowBlur = 0;
-        
-        resolve(canvas.toDataURL('image/png'));
+        try {
+          // Clear canvas
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          
+          // Draw the background artwork
+          ctx.drawImage(backgroundImg, 0, 0, canvas.width, canvas.height);
+          
+          // Add dark overlay for text readability
+          ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+          
+          // Add subtle gradient overlay
+          const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+          gradient.addColorStop(0, 'rgba(0, 255, 255, 0.1)');
+          gradient.addColorStop(0.5, 'rgba(138, 43, 226, 0.1)');
+          gradient.addColorStop(1, 'rgba(255, 20, 147, 0.1)');
+          ctx.fillStyle = gradient;
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+          
+          // Set text properties for better rendering
+          ctx.textBaseline = 'middle';
+          ctx.textAlign = 'center';
+          
+          // Current Score (Main highlight) - Larger and more prominent
+          ctx.fillStyle = '#00ffff';
+          ctx.font = 'bold 120px Arial, sans-serif';
+          ctx.shadowColor = '#00ffff';
+          ctx.shadowBlur = 30;
+          ctx.shadowOffsetX = 0;
+          ctx.shadowOffsetY = 0;
+          
+          // Add text stroke for better visibility
+          ctx.strokeStyle = '#000000';
+          ctx.lineWidth = 4;
+          ctx.strokeText(`${score}`, canvas.width / 2, 200);
+          ctx.fillText(`${score}`, canvas.width / 2, 200);
+          
+          // "ECHOES" label
+          ctx.fillStyle = '#F5F5DC';
+          ctx.font = 'bold 60px Arial, sans-serif';
+          ctx.shadowColor = '#F5F5DC';
+          ctx.shadowBlur = 20;
+          ctx.lineWidth = 3;
+          ctx.strokeText('ECHOES LAUNCHED', canvas.width / 2, 270);
+          ctx.fillText('ECHOES LAUNCHED', canvas.width / 2, 270);
+          
+          // High Score section
+          const displayHighScore = Math.max(score, highScore);
+          ctx.fillStyle = '#FFD700';
+          ctx.font = 'bold 36px Arial, sans-serif';
+          ctx.shadowColor = '#FFD700';
+          ctx.shadowBlur = 15;
+          ctx.lineWidth = 2;
+          ctx.strokeText(`HIGH SCORE: ${displayHighScore}`, canvas.width / 2, 350);
+          ctx.fillText(`HIGH SCORE: ${displayHighScore}`, canvas.width / 2, 350);
+          
+          // Website/branding
+          ctx.fillStyle = '#F5F5DC';
+          ctx.font = 'bold 28px Arial, sans-serif';
+          ctx.shadowColor = '#000000';
+          ctx.shadowBlur = 10;
+          ctx.lineWidth = 2;
+          ctx.strokeText('SMP7700.XYZ', canvas.width / 2, 420);
+          ctx.fillText('SMP7700.XYZ', canvas.width / 2, 420);
+          
+          // Add decorative elements
+          ctx.strokeStyle = '#00ffff';
+          ctx.lineWidth = 3;
+          ctx.setLineDash([10, 10]);
+          ctx.strokeRect(50, 50, canvas.width - 100, canvas.height - 100);
+          ctx.setLineDash([]);
+          
+          // Reset shadow
+          ctx.shadowBlur = 0;
+          ctx.shadowOffsetX = 0;
+          ctx.shadowOffsetY = 0;
+          
+          resolve(canvas.toDataURL('image/png', 0.95));
+        } catch (error) {
+          console.error('Error drawing on canvas:', error);
+          resolve(null);
+        }
       };
-      backgroundImg.onerror = () => {
-        // Fallback to gradient background if image fails
-        const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-        gradient.addColorStop(0, '#000000');
-        gradient.addColorStop(0.5, '#1a1a2e');
-        gradient.addColorStop(1, '#000000');
-        ctx.fillStyle = gradient;
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        
-        // Add the same text as above
-        ctx.fillStyle = '#00ffff';
-        ctx.font = 'bold 120px Arial';
-        ctx.textAlign = 'center';
-        ctx.fillText(`${score}`, canvas.width / 2, 200);
-        
-        ctx.fillStyle = '#F5F5DC';
-        ctx.font = 'bold 60px Arial';
-        ctx.fillText('ECHOES LAUNCHED', canvas.width / 2, 270);
-        
-        const displayHighScore = Math.max(score, highScore);
-        ctx.fillStyle = '#FFD700';
-        ctx.font = 'bold 36px Arial';
-        ctx.fillText(`HIGH SCORE: ${displayHighScore}`, canvas.width / 2, 350);
-        
-                 ctx.fillStyle = '#F5F5DC';
-         ctx.font = 'bold 28px Arial';
-         ctx.fillText('SMP7700.XYZ', canvas.width / 2, 420);
-        
-        resolve(canvas.toDataURL('image/png'));
+      
+      backgroundImg.onerror = (error) => {
+        console.warn('Failed to load background image, using fallback:', error);
+        try {
+          // Fallback to gradient background if image fails
+          const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+          gradient.addColorStop(0, '#000000');
+          gradient.addColorStop(0.3, '#1a1a2e');
+          gradient.addColorStop(0.7, '#16213e');
+          gradient.addColorStop(1, '#000000');
+          ctx.fillStyle = gradient;
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+          
+          // Add pattern overlay
+          ctx.fillStyle = 'rgba(0, 255, 255, 0.1)';
+          for (let i = 0; i < canvas.width; i += 40) {
+            for (let j = 0; j < canvas.height; j += 40) {
+              if ((i + j) % 80 === 0) {
+                ctx.fillRect(i, j, 20, 20);
+              }
+            }
+          }
+          
+          // Set text properties
+          ctx.textBaseline = 'middle';
+          ctx.textAlign = 'center';
+          
+          // Add the same text as above with improved styling
+          ctx.fillStyle = '#00ffff';
+          ctx.font = 'bold 120px Arial, sans-serif';
+          ctx.shadowColor = '#00ffff';
+          ctx.shadowBlur = 30;
+          ctx.strokeStyle = '#000000';
+          ctx.lineWidth = 4;
+          ctx.strokeText(`${score}`, canvas.width / 2, 200);
+          ctx.fillText(`${score}`, canvas.width / 2, 200);
+          
+          ctx.fillStyle = '#F5F5DC';
+          ctx.font = 'bold 60px Arial, sans-serif';
+          ctx.shadowColor = '#F5F5DC';
+          ctx.shadowBlur = 20;
+          ctx.lineWidth = 3;
+          ctx.strokeText('ECHOES LAUNCHED', canvas.width / 2, 270);
+          ctx.fillText('ECHOES LAUNCHED', canvas.width / 2, 270);
+          
+          const displayHighScore = Math.max(score, highScore);
+          ctx.fillStyle = '#FFD700';
+          ctx.font = 'bold 36px Arial, sans-serif';
+          ctx.shadowColor = '#FFD700';
+          ctx.shadowBlur = 15;
+          ctx.lineWidth = 2;
+          ctx.strokeText(`HIGH SCORE: ${displayHighScore}`, canvas.width / 2, 350);
+          ctx.fillText(`HIGH SCORE: ${displayHighScore}`, canvas.width / 2, 350);
+          
+          ctx.fillStyle = '#F5F5DC';
+          ctx.font = 'bold 28px Arial, sans-serif';
+          ctx.shadowColor = '#000000';
+          ctx.shadowBlur = 10;
+          ctx.lineWidth = 2;
+          ctx.strokeText('SMP7700.XYZ', canvas.width / 2, 420);
+          ctx.fillText('SMP7700.XYZ', canvas.width / 2, 420);
+          
+          // Add decorative border
+          ctx.strokeStyle = '#00ffff';
+          ctx.lineWidth = 3;
+          ctx.setLineDash([10, 10]);
+          ctx.strokeRect(50, 50, canvas.width - 100, canvas.height - 100);
+          ctx.setLineDash([]);
+          
+          // Reset shadow
+          ctx.shadowBlur = 0;
+          ctx.shadowOffsetX = 0;
+          ctx.shadowOffsetY = 0;
+          
+          resolve(canvas.toDataURL('image/png', 0.95));
+        } catch (fallbackError) {
+          console.error('Error in fallback canvas generation:', fallbackError);
+          resolve(null);
+        }
       };
+      
+      // Load the background image
       backgroundImg.src = '/1500x500.jpg';
     });
   };
 
   const handleShare = async () => {
-    // Generate the score card immediately when share is clicked
-    const dataUrl = await generateScoreCard(currentScore);
-    setScoreCardDataUrl(dataUrl);
     setShowShareModal(true);
+    // Generate the score card immediately when share is clicked
+    try {
+      const dataUrl = await generateScoreCard(currentScore);
+      setScoreCardDataUrl(dataUrl);
+      if (!dataUrl) {
+        console.error('Failed to generate score card');
+      }
+    } catch (error) {
+      console.error('Error generating score card:', error);
+      setScoreCardDataUrl(null);
+    }
   };
 
   const downloadScoreCard = async () => {
-    const dataUrl = scoreCardDataUrl || await generateScoreCard(currentScore);
-    if (dataUrl) {
-      const link = document.createElement('a');
-      link.download = `smp-score-${currentScore}.png`;
-      link.href = dataUrl;
-      link.click();
+    try {
+      const dataUrl = scoreCardDataUrl || await generateScoreCard(currentScore);
+      if (dataUrl) {
+        const link = document.createElement('a');
+        link.download = `smp-echoes-${currentScore}-${Date.now()}.png`;
+        link.href = dataUrl;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      } else {
+        console.error('Failed to generate or retrieve score card');
+        alert('Failed to generate score card. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error downloading score card:', error);
+      alert('Error downloading score card. Please try again.');
     }
   };
 
@@ -191,15 +303,26 @@ export function ScoreTracker({ currentScore, onReset }: ScoreTrackerProps) {
           <div className="text-purple-300 text-xl font-bold">{globalEchoes.toLocaleString()}</div>
         </div>
         
-        {/* Share Button */}
-        {currentScore > 0 && (
-          <button
-            onClick={handleShare}
-            className="backdrop-blur-md bg-white/10 border border-white/20 rounded-xl px-4 py-2 hover:bg-white/20 transition-colors text-white/80 hover:text-white text-sm font-mono"
-          >
-            SHARE
-          </button>
-        )}
+        {/* Action Buttons */}
+        <div className="flex flex-col space-y-2">
+          {currentScore > 0 && (
+            <button
+              onClick={handleShare}
+              className="backdrop-blur-md bg-white/10 border border-white/20 rounded-xl px-4 py-2 hover:bg-white/20 transition-colors text-white/80 hover:text-white text-sm font-mono"
+            >
+              SHARE
+            </button>
+          )}
+          
+          {currentScore > 0 && (
+            <button
+              onClick={onReset}
+              className="backdrop-blur-md bg-red-500/20 border border-red-400/30 rounded-xl px-4 py-2 hover:bg-red-500/30 transition-colors text-red-300 hover:text-red-200 text-sm font-mono"
+            >
+              RESET
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Share Modal with Live Preview */}
@@ -228,8 +351,14 @@ export function ScoreTracker({ currentScore, onReset }: ScoreTrackerProps) {
                     style={{ maxHeight: '300px' }}
                   />
                 </div>
+              ) : scoreCardDataUrl === null ? (
+                <div className="flex flex-col justify-center items-center h-40 text-center">
+                  <div className="text-red-400 mb-2">⚠️ Failed to generate preview</div>
+                  <div className="text-white/60 text-sm">You can still try to download or share</div>
+                </div>
               ) : (
-                <div className="flex justify-center items-center h-40">
+                <div className="flex flex-col justify-center items-center h-40">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-cyan-400 mb-3"></div>
                   <div className="text-white/60">Generating preview...</div>
                 </div>
               )}
