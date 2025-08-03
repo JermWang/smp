@@ -13,7 +13,7 @@ export function middleware(request: NextRequest) {
   // CSP (Content Security Policy)
   response.headers.set(
     'Content-Security-Policy',
-    "default-src 'self'; img-src 'self' data: https:; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self' data:;"
+    "default-src 'self'; connect-src 'self' https://oeqrvuboilyqzwxpdgxy.supabase.co wss://oeqrvuboilyqzwxpdgxy.supabase.co; img-src 'self' data: https:; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self' data:;"
   )
 
   // Only allow POST requests to the API
