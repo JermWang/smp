@@ -9,7 +9,6 @@ import {
   Upload, 
   Eye, 
   Download, 
-  X, 
   ImageIcon, 
   Loader2, 
   Sparkles,
@@ -272,25 +271,10 @@ export function GreenEyesGeneratorModal({ isOpen, onClose }: GreenEyesGeneratorM
         onInteractOutside={(e) => e.preventDefault()}
       >
         <DialogHeader className="mb-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 text-green-300 text-lg flex-1 justify-center">
-              <Eye className="w-5 h-5" />
-              <DialogTitle className="text-green-300">PFP Editor</DialogTitle>
-              <Sparkles className="w-4 h-4 text-green-400" />
-            </div>
-            <Button
-              onClick={handleClose}
-              variant="ghost"
-              size="sm"
-              className="text-green-400/60 hover:text-green-300 hover:bg-green-400/10 rounded-xl p-1 ml-2"
-              aria-label="Close generator"
-            >
-              <X className="w-5 h-5" />
-            </Button>
-          </div>
-          {/* Debug indicator - remove in production */}
-          <div className="text-xs text-green-500/60 text-center mt-1">
-            Stage: {stage} | Image: {selectedImage ? '✓' : '✗'} | Preview: {previewUrl ? '✓' : '✗'} | URL: {previewUrl ? (previewUrl.startsWith('blob:') ? 'blob' : 'data') : 'none'}
+          <div className="flex items-center gap-2 text-green-300 text-lg justify-center">
+            <Eye className="w-5 h-5" />
+            <DialogTitle className="text-green-300">PFP Editor</DialogTitle>
+            <Sparkles className="w-4 h-4 text-green-400" />
           </div>
         </DialogHeader>
 
@@ -491,15 +475,9 @@ export function GreenEyesGeneratorModal({ isOpen, onClose }: GreenEyesGeneratorM
           {stage === 'complete' && processedImageUrl && (
             <div className="space-y-4">
               <div className="text-center">
-                <h3 className="text-lg font-medium text-green-300 mb-1">
+                <h3 className="text-lg font-medium text-green-300 mb-2">
                   🎉 Green Eyes Activated!
                 </h3>
-                <p className="text-sm text-green-400/80">
-                  Perfect for crypto Twitter! 🚀
-                </p>
-                <p className="text-xs text-green-500/60 mt-1">
-                  Laser beams shooting from eyes • Original artwork preserved
-                </p>
               </div>
               
               {/* Large Square Result */}
@@ -508,11 +486,8 @@ export function GreenEyesGeneratorModal({ isOpen, onClose }: GreenEyesGeneratorM
                   src={processedImageUrl}
                   alt="Your Green Eyes PFP"
                   className="w-full h-full object-cover rounded-3xl"
-                  onLoad={() => console.log('✅ Processed image loaded successfully')}
-                  onError={(e) => {
-                    console.error('❌ Processed image failed to load:', e)
-                    console.log('Processed URL:', processedImageUrl)
-                  }}
+                  onLoad={() => {}}
+                  onError={() => {}}
                 />
                 {/* Green glow overlay */}
                 <div className="absolute inset-0 bg-gradient-to-br from-green-400/10 via-transparent to-green-600/10 pointer-events-none" />
