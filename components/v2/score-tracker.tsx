@@ -24,13 +24,18 @@ export function ScoreTracker({ currentScore, onReset }: ScoreTrackerProps) {
 
     // Initialize global echo tracking
     const initializeGlobalTracking = async () => {
+      console.log('🎯 ScoreTracker: Starting global echo tracking initialization...')
+      
       // Get initial global count
       const initialCount = await GlobalEchoService.getGlobalEchoCount();
+      console.log('🎯 ScoreTracker: Got initial count:', initialCount)
+      
       setGlobalEchoes(initialCount);
+      console.log('🎯 ScoreTracker: Set globalEchoes state to:', initialCount)
 
       // Subscribe to real-time updates
       const unsubscribe = GlobalEchoService.subscribeToEchoUpdates((newCount) => {
-        console.log('🔄 Front-end received echo update:', newCount);
+        console.log('🔄 ScoreTracker: Front-end received echo update:', newCount);
         setGlobalEchoes(newCount);
       });
 

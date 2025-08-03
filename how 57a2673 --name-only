@@ -1,0 +1,61 @@
+[33m832b832[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m Add full OpenAI integration for Green Eyes Generator
+ app/api/generate-green-eyes/route.ts | 121 [32m++++++++++++++++++++++++++++++++[m[31m---[m
+ 1 file changed, 112 insertions(+), 9 deletions(-)
+[33m25060cc[m Add basic Green Eyes API to fix JSON parsing error
+ app/api/generate-green-eyes/route.ts | 33 [32m+++++++++++++++++++++++++++++++++[m
+ 1 file changed, 33 insertions(+)
+[33m57a2673[m Fix build by removing green eyes API
+ CACHE_PROBLEM_SOLVED.md                            |  35 [32m++[m
+ CLEAN_SQL_SETUP.sql                                |  59 [32m++[m
+ CONSERVATIVE_NFT_PRESERVATION.md                   | 112 [32m++++[m
+ CORRECTED_RESTORE_306404_FINAL.sql                 |  89 [32m+++[m
+ DALL_E_PROMPT_FIX.md                               |  97 [32m++++[m
+ DATABASE_FUNCTION_ISSUE.md                         |  48 [32m++[m
+ DEBUG_GREEN_EYES.md                                | 113 [32m++++[m
+ DIAGNOSTIC_CHECK.sql                               |  42 [32m++[m
+ DISABLE_ALL_INITIALIZATION.md                      |  36 [32m++[m
+ EMERGENCY_RESTORE_306640.sql                       |  62 [32m+++[m
+ EMERGENCY_RESTORE_FINAL.sql                        |  73 [32m+++[m
+ FINAL_DATABASE_FUNCTION_FIX.sql                    |  52 [32m++[m
+ FINAL_RESTORE_306640_PERMANENT.sql                 | 139 [32m+++++[m
+ FIXED_GLOBAL_ECHO_SERVICE.ts                       | 111 [32m++++[m
+ FIXED_IMAGE_LOADING_GUIDE.md                       |  96 [32m++++[m
+ FIX_GREEN_EYES_SETUP.sql                           |  55 [32m++[m
+ IMMEDIATE_RESTORE_FIX.sql                          |  31 [32m++[m
+ LASER_BEAM_TROUBLESHOOTING.md                      | 110 [32m++++[m
+ NFT_CARTOON_SUPPORT_GUIDE.md                       | 130 [32m+++++[m
+ QUICK_FIX_GLOBAL_STATS.sql                         |  35 [32m++[m
+ REPLACE_ECHO_SERVICE_INSTRUCTIONS.md               |  51 [32m++[m
+ RESTORE_306640_ECHOES.sql                          |  19 [32m+[m
+ RESTORE_ECHO_COUNT.sql                             |  20 [32m+[m
+ SAFE_GLOBAL_STATS_POLICIES.sql                     |  72 [32m+++[m
+ SAFE_GREEN_EYES_SETUP.sql                          |  62 [32m+++[m
+ SETUP_QUICK_START.md                               | 128 [32m+++++[m
+ SIMPLE_DIAGNOSTIC.sql                              |   4 [32m+[m
+ SIMPLE_RESTORE_STEPS.md                            |  45 [32m++[m
+ SUPABASE_GREEN_EYES_SETUP.md                       | 133 [32m+++++[m
+ TEST_GREEN_EYES.md                                 |  95 [32m++++[m
+ TEST_IMAGE_LOADING.md                              | 121 [32m+++++[m
+ TEST_NFT_GENERATOR.md                              |  99 [32m++++[m
+ X_BUTTON_STATUS.md                                 |  72 [32m+++[m
+ ...o succeed while we fix the Green Eyes Generator | 314 [32m+++++++++++[m
+ app/animations.css                                 |  29 [32m+[m
+ app/api/generate-green-eyes/route.ts               | 317 [31m-----------[m
+ app/page.tsx                                       |   8 [32m+[m[31m-[m
+ components/green-eyes-container.tsx                |  27 [32m+[m
+ components/green-eyes-generator-button.tsx         | 122 [32m+++++[m
+ components/green-eyes-generator-modal.tsx          | 602 [32m+++++++++++++++++++++[m
+ ...olution issues with openai and supabase-storage |   3 [32m+[m
+ h origin main                                      |  11 [32m+[m
+ lib/supabase-storage.ts                            | 239 [32m++++++++[m
+ middleware.ts                                      |  46 [32m++[m
+ package-lock.json                                  |  22 [32m+[m
+ package.json                                       |   1 [32m+[m
+ 46 files changed, 3869 insertions(+), 318 deletions(-)
+[33m9eacc80[m  Fix Green Eyes Generator with optimized prompts
+ IMPROVED_GREEN_EYES_GUIDE.md         | 209 [32m+++++++++++++++++++++++[m
+ app/api/generate-green-eyes/route.ts | 317 [32m+++++++++++++++++++++++++++++++++++[m
+ 2 files changed, 526 insertions(+)
+[33m983a209[m  Add Supabase database protection documentation
+ SUPABASE_PROTECTION_NOTES.md | 152 [32m+++++++++++++++++++++++++++++++++++++++++++[m
+ 1 file changed, 152 insertions(+)

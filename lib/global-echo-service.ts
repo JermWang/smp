@@ -35,24 +35,31 @@ export class GlobalEchoService {
   // Get current global echo count
   static async getGlobalEchoCount(): Promise<number> {
     try {
+      console.log('🔍 Fetching global echo count from database...')
       const { data, error } = await supabase
         .from('global_stats')
         .select('total_echoes')
         .eq('id', 1)
         .single()
 
+      console.log('🔍 Database response:', { data, error })
+
       if (error) {
         if (error.code === 'PGRST116') {
           console.warn('⚠️  Global stats table not found. Please run the SQL setup from SUPABASE_SETUP.md')
         } else {
-          console.error('Error fetching global echo count:', error)
+          console.error('🚨 Error fetching global echo count:', error)
         }
         return 0
       }
 
-      return data?.total_echoes || 0
+      const count = data?.total_echoes || 0
+      console.log('🔍 Extracted count:', count)
+      console.log('🔍 Raw data.total_echoes:', data?.total_echoes)
+      
+      return count
     } catch (error) {
-      console.error('Error in getGlobalEchoCount:', error)
+      console.error('🚨 Exception in getGlobalEchoCount:', error)
       return 0
     }
   }

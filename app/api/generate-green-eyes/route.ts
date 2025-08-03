@@ -1,9 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server'
 import OpenAI from 'openai'
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-})
+// Initialize OpenAI only when needed to avoid build-time errors
+function getOpenAI() {
+  if (!process.env.OPENAI_API_KEY) {
+    throw new Error('OPENAI_API_KEY environment variable is required')
+  }
+  return new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY,
+  })
+}
 
 // Security constants
 const MAX_FILE_SIZE = 5 * 1024 * 1024 // 5MB
@@ -59,6 +65,7 @@ export async function POST(request: NextRequest) {
     // Try primary prompt first (optimized for best results)
     try {
       console.log('🎨 Trying optimized laser eyes prompt...')
+      const openai = getOpenAI()
       response = await openai.images.edit({
         image: openAIFile,
         prompt: prompts.primary,
@@ -77,6 +84,7 @@ export async function POST(request: NextRequest) {
       
       // Try fallback prompt
       try {
+        const openai = getOpenAI()
         response = await openai.images.edit({
           image: openAIFile,
           prompt: prompts.fallback,
@@ -94,6 +102,7 @@ export async function POST(request: NextRequest) {
         
         // Try simple prompt as last resort
         try {
+          const openai = getOpenAI()
           response = await openai.images.edit({
             image: openAIFile,
             prompt: prompts.simple,
