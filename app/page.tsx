@@ -8,6 +8,7 @@ import { RotatingSpace } from '@/components/v2/rotating-space'
 import { AmbientSound } from '@/components/v2/ambient-sound'
 import { SocialLinks } from '@/components/v2/social-links'
 import { CRTFilter } from '@/components/v2/crt-filter'
+import { GreenEyesContainer } from '@/components/green-eyes-container'
 
 import { ContractAddress } from '@/components/v2/contract-address'
 import { ScoreTracker } from '@/components/v2/score-tracker'
@@ -174,7 +175,12 @@ export default function V2Page() {
         )
       })}
       
-      {/* UI Controls */}
+      {/* Green Eyes Generator - Bottom Left */}
+      <div className="absolute bottom-20 left-4 pointer-events-auto z-20">
+        <GreenEyesContainer />
+      </div>
+
+      {/* UI Controls - Center Bottom (Original Layout) */}
       <div className="absolute inset-0 pointer-events-none flex flex-col items-center justify-end pb-32 md:pb-8">
         <div className="flex flex-col items-center pointer-events-auto space-y-3 sm:space-y-4">
           <SocialLinks />

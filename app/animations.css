@@ -255,4 +255,33 @@
 @keyframes scanlines {
   0% { transform: translateY(0); }
   100% { transform: translateY(4px); }
+}
+
+/* Green Eyes Button Scan Animation */
+@keyframes scan {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.2s ease-out forwards;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Sacred Geometry Animations */
+.animate-spin-slow {
+  animation: spin 4s linear infinite;
+}
+
+.animate-spin-reverse {
+  animation: spin-reverse 3s linear infinite;
+}
+
+@keyframes spin-reverse {
+  from { transform: rotate(360deg); }
+  to { transform: rotate(0deg); }
 } 
