@@ -30,6 +30,7 @@ export function ScoreTracker({ currentScore, onReset }: ScoreTrackerProps) {
 
       // Subscribe to real-time updates
       const unsubscribe = GlobalEchoService.subscribeToEchoUpdates((newCount) => {
+        console.log('🔄 Front-end received echo update:', newCount);
         setGlobalEchoes(newCount);
       });
 
@@ -39,12 +40,16 @@ export function ScoreTracker({ currentScore, onReset }: ScoreTrackerProps) {
       return unsubscribe;
     };
 
-    const unsubscribePromise = initializeGlobalTracking();
+    let unsubscribeFn: (() => void) | null = null;
+    
+    initializeGlobalTracking().then((unsubscribe) => {
+      unsubscribeFn = unsubscribe;
+    });
 
     return () => {
-      unsubscribePromise.then(unsubscribe => {
-        if (unsubscribe) unsubscribe();
-      });
+      if (unsubscribeFn) {
+        unsubscribeFn();
+      }
     };
   }, []);
 

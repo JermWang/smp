@@ -1,63 +1,33 @@
 import { supabase } from './supabase'
 
 export class GlobalEchoService {
-  // Increment the global echo count
+  // Increment the global echo count - SAFE VERSION
   static async incrementGlobalEchoes(): Promise<number | null> {
     try {
-      // Use RPC function for atomic increment (safer for concurrent users)
+      console.log('🎯 Incrementing echo count using SAFE method...')
+      
+      // Use the database RPC function ONLY - no fallbacks
       const { data, error } = await supabase
         .rpc('increment_global_echoes')
 
       if (error) {
-        // Fallback to manual increment if RPC fails
-        console.warn('RPC increment failed, using fallback:', error)
-        return await this.incrementGlobalEchoesFallback()
-      }
-
-      return data
-    } catch (error) {
-      console.error('Error in incrementGlobalEchoes:', error)
-      return await this.incrementGlobalEchoesFallback()
-    }
-  }
-
-  // Fallback increment method
-  private static async incrementGlobalEchoesFallback(): Promise<number | null> {
-    try {
-      // First, get the current count
-      const { data: currentData, error: fetchError } = await supabase
-        .from('global_stats')
-        .select('total_echoes')
-        .eq('id', 1)
-        .single()
-
-      if (fetchError && fetchError.code !== 'PGRST116') {
-        console.error('Error fetching current count:', fetchError)
+        console.error('🚨 RPC INCREMENT FAILED - NOT using any fallback to prevent reset!')
+        console.error('🚨 Error:', error)
+        console.error('🚨 Your count is SAFE - just the increment failed this time.')
         return null
       }
 
-      const currentCount = currentData?.total_echoes || 0
-      const newCount = currentCount + 1
-
-      // Update the count
-      const { data, error } = await supabase
-        .from('global_stats')
-        .upsert({ 
-          id: 1, 
-          total_echoes: newCount,
-          updated_at: new Date().toISOString()
-        })
-        .select('total_echoes')
-        .single()
-
-      if (error) {
-        console.error('Error incrementing global echoes:', error)
-        return null
+      if (data) {
+        console.log('✅ Echo count incremented successfully to:', data)
+        return data
       }
 
-      return data.total_echoes
+      console.error('🚨 RPC returned no data - NOT using fallback to prevent reset!')
+      return null
+
     } catch (error) {
-      console.error('Error in incrementGlobalEchoesFallback:', error)
+      console.error('🚨 CRITICAL: Increment failed - NOT using fallback to prevent reset!')
+      console.error('Error:', error)
       return null
     }
   }
@@ -72,7 +42,11 @@ export class GlobalEchoService {
         .single()
 
       if (error) {
-        console.error('Error fetching global echo count:', error)
+        if (error.code === 'PGRST116') {
+          console.warn('⚠️  Global stats table not found. Please run the SQL setup from SUPABASE_SETUP.md')
+        } else {
+          console.error('Error fetching global echo count:', error)
+        }
         return 0
       }
 
@@ -84,47 +58,57 @@ export class GlobalEchoService {
   }
 
   // Subscribe to real-time updates
-  static subscribeToGlobalEchoes(callback: (count: number) => void) {
-    const channel = supabase
+  static subscribeToEchoUpdates(callback: (count: number) => void) {
+    const subscription = supabase
       .channel('global_stats_changes')
       .on(
         'postgres_changes',
         {
-          event: '*',
+          event: 'UPDATE',
           schema: 'public',
           table: 'global_stats',
           filter: 'id=eq.1'
         },
         (payload) => {
-          if (payload.new && typeof payload.new === 'object' && 'total_echoes' in payload.new) {
-            callback(payload.new.total_echoes as number)
-          }
+          console.log('📡 Real-time echo update received:', payload.new)
+          const newCount = (payload.new as any)?.total_echoes || 0
+          callback(newCount)
         }
       )
       .subscribe()
 
+    // Return a proper unsubscribe function
     return () => {
-      supabase.removeChannel(channel)
+      subscription.unsubscribe()
     }
   }
 
-  // Initialize the database (call this once)
+  // Initialize the database (SAFE VERSION - never resets)
   static async initializeDatabase(): Promise<void> {
     try {
-      const { error } = await supabase
+      // Check if table exists by trying to select from it
+      const { data: existingData, error: selectError } = await supabase
         .from('global_stats')
-        .upsert({ 
-          id: 1, 
-          total_echoes: 0,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
-        })
+        .select('id, total_echoes')
+        .eq('id', 1)
+        .single()
 
-      if (error) {
-        console.error('Error initializing database:', error)
+      if (selectError && selectError.code === 'PGRST116') {
+        console.warn('⚠️  Global stats table not found. Please run the emergency restoration script.')
+        console.log('💡 Run EMERGENCY_RESTORE_FINAL.sql in your Supabase SQL editor.')
+        return
+      }
+
+      if (!existingData) {
+        console.error('🚨 CRITICAL: Global stats record not found!')
+        console.error('🚨 Please run EMERGENCY_RESTORE_FINAL.sql to restore your count.')
+        console.error('🚨 The app will NOT create a new record to prevent resetting your count.')
+      } else {
+        console.log('✅ Global stats initialized with count:', existingData.total_echoes)
       }
     } catch (error) {
-      console.error('Error in initializeDatabase:', error)
+      console.error('❌ Error in initializeDatabase:', error)
+      console.warn('💡 Run EMERGENCY_RESTORE_FINAL.sql to fix all database issues.')
     }
   }
-} 
+}
