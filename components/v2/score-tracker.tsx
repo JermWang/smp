@@ -29,12 +29,12 @@ export function ScoreTracker({ currentScore, onReset }: ScoreTrackerProps) {
       setGlobalEchoes(initialCount);
 
       // Subscribe to real-time updates
-      const unsubscribe = GlobalEchoService.subscribeToGlobalEchoes((newCount) => {
+      const unsubscribe = GlobalEchoService.subscribeToEchoUpdates((newCount) => {
         setGlobalEchoes(newCount);
       });
 
-      // Initialize database if needed (first time setup)
-      await GlobalEchoService.initializeDatabase();
+      // DISABLED - this was causing echo count resets!
+      // await GlobalEchoService.initializeDatabase();
 
       return unsubscribe;
     };
