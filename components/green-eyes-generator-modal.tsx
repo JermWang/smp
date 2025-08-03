@@ -9,6 +9,7 @@ import {
   Upload, 
   Eye, 
   Download, 
+  X, 
   ImageIcon, 
   Loader2, 
   Sparkles,
@@ -271,10 +272,21 @@ export function GreenEyesGeneratorModal({ isOpen, onClose }: GreenEyesGeneratorM
         onInteractOutside={(e) => e.preventDefault()}
       >
         <DialogHeader className="mb-4">
-          <div className="flex items-center gap-2 text-green-300 text-lg justify-center">
-            <Eye className="w-5 h-5" />
-            <DialogTitle className="text-green-300">PFP Editor</DialogTitle>
-            <Sparkles className="w-4 h-4 text-green-400" />
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2 text-green-300 text-lg flex-1 justify-center">
+              <Eye className="w-5 h-5" />
+              <DialogTitle className="text-green-300">PFP Editor</DialogTitle>
+              <Sparkles className="w-4 h-4 text-green-400" />
+            </div>
+            <Button
+              onClick={handleClose}
+              variant="ghost"
+              size="sm"
+              className="text-green-400/60 hover:text-green-300 hover:bg-green-400/10 rounded-xl p-1 ml-2"
+              aria-label="Close generator"
+            >
+              <X className="w-5 h-5" />
+            </Button>
           </div>
         </DialogHeader>
 
