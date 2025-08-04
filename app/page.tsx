@@ -177,7 +177,7 @@ export default function V2Page() {
       
       {/* Green Eyes Generator - Bottom Left */}
       <div className="absolute bottom-20 left-4 pointer-events-auto z-20">
-        <GreenEyesContainer />
+        {/* <GreenEyesContainer /> */}
       </div>
 
       {/* UI Controls - Center Bottom (Original Layout) */}
