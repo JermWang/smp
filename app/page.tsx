@@ -175,8 +175,8 @@ export default function V2Page() {
         )
       })}
       
-      {/* Green Eyes Generator - Bottom Left */}
-      <div className="absolute bottom-20 left-4 pointer-events-auto z-20">
+      {/* Green Eyes Generator - Centered on Mobile, Bottom Left on Desktop */}
+      <div className="absolute bottom-20 left-1/2 -translate-x-1/2 sm:left-4 sm:translate-x-0 pointer-events-auto z-20">
         <GreenEyesContainer />
       </div>
 
