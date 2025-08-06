@@ -76,7 +76,7 @@ export function GreenEyesGeneratorButton({ onClick, className = "" }: GreenEyesG
             <span className={`text-sm font-medium transition-all duration-300 ${
               isHovered ? 'text-green-200' : 'text-green-300'
             }`}>
-              GREEN EYES
+              MEME EDITOR
             </span>
           </div>
           
@@ -109,7 +109,7 @@ export function GreenEyesGeneratorButton({ onClick, className = "" }: GreenEyesG
                        animate-fade-in whitespace-nowrap shadow-lg">
           <div className="flex items-center space-x-1">
             <Eye size={12} className="text-green-400" />
-            <span>Transform PFP</span>
+            <span>Deep Fry Memes</span>
           </div>
           {/* Arrow */}
           <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1">

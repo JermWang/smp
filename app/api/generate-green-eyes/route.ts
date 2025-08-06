@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import OpenAI from 'openai'
+import sharp from 'sharp'
 
 // Initialize OpenAI only when needed to avoid build-time errors
 function getOpenAI() {
@@ -43,34 +44,45 @@ export async function POST(request: NextRequest) {
     const bytes = await imageFile.arrayBuffer()
     const buffer = Buffer.from(bytes)
     
-    // Convert buffer to File for OpenAI
-    const imageBlob = new Blob([buffer], { type: imageFile.type })
-    const openAIFile = new File([imageBlob], imageFile.name, { type: imageFile.type })
+    // Convert RGB to RGBA using Sharp for DALL-E 2 compatibility
+    console.log('🔄 Converting image to RGBA format using Sharp...')
     
-    // Optimized prompts based on DALL-E best practices
+    const rgbaBuffer = await sharp(buffer)
+      .ensureAlpha() // Add alpha channel (RGB → RGBA)
+      .png() // Output as PNG
+      .toBuffer()
+    
+    // Create File object with RGBA PNG data
+    const openAIFile = new File([rgbaBuffer], 'image.png', { type: 'image/png' })
+    
+    console.log(`✅ Successfully converted to RGBA PNG (${rgbaBuffer.length} bytes)`)
+    
+    // DALL-E 2 Edit prompts - focus on ADDING elements, not describing whole scene
     const prompts = {
-      // Primary: Clear, direct instruction (works best)
-      primary: "Add bright green laser eyes. Green laser beams shoot from the eyes.",
+      // Primary: Simple additive instruction
+      primary: "green glowing laser eyes with bright green laser beams",
       
-      // Fallback: Popular meme reference (clear context)
-      fallback: "Green laser eyes meme effect. Glowing green eyes with laser beams.",
+      // Fallback: More specific meme reference  
+      fallback: "laser eyes meme green glowing eyes beams",
       
-      // Last resort: Minimal but specific
-      simple: "Green glowing eyes with laser beams."
+      // Simple: Minimal keywords
+      simple: "green laser eyes"
     }
     
     let response;
     let lastError;
     
-    // Try primary prompt first (optimized for best results)
+    // Try primary prompt first (DALL-E 2 edit optimized for adding elements)
     try {
-      console.log('🎨 Trying optimized laser eyes prompt...')
+      console.log('🎨 Trying DALL-E 2 edit with simplified laser eyes prompt...')
       const openai = getOpenAI()
+      // Try DALL-E 2 edit with proper format handling
+      console.log(`📋 Sending ${openAIFile.type} file to DALL-E 2...`)
       response = await openai.images.edit({
         image: openAIFile,
         prompt: prompts.primary,
         n: 1,
-        size: "1024x1024",
+        size: "1024x1024"
       })
       
       if (response.data && response.data[0]?.url) {
@@ -89,7 +101,7 @@ export async function POST(request: NextRequest) {
           image: openAIFile,
           prompt: prompts.fallback,
           n: 1,
-          size: "1024x1024",
+          size: "1024x1024"
         })
         
         if (response.data && response.data[0]?.url) {
@@ -107,7 +119,7 @@ export async function POST(request: NextRequest) {
             image: openAIFile,
             prompt: prompts.simple,
             n: 1,
-            size: "1024x1024",
+            size: "1024x1024"
           })
           
           if (response.data && response.data[0]?.url) {
@@ -137,9 +149,12 @@ export async function POST(request: NextRequest) {
     
   } catch (error) {
     console.error('❌ Green Eyes API Error:', error)
+    console.error('❌ Error details:', error instanceof Error ? error.message : 'Unknown error')
+    console.error('❌ Error stack:', error instanceof Error ? error.stack : 'No stack')
     return NextResponse.json({ 
       error: 'Failed to generate laser eyes',
-      details: error instanceof Error ? error.message : 'Unknown error'
+      details: error instanceof Error ? error.message : 'Unknown error',
+      type: error instanceof Error ? error.constructor.name : 'Unknown'
     }, { status: 500 })
   }
 }

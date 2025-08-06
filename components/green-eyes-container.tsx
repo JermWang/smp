@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { GreenEyesGeneratorButton } from "./green-eyes-generator-button"
-import { GreenEyesGeneratorModal } from "./green-eyes-generator-modal"
+import { AssetEditorModal } from "./asset-editor-modal"
 
 export function GreenEyesContainer() {
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -18,7 +18,7 @@ export function GreenEyesContainer() {
   return (
     <>
       <GreenEyesGeneratorButton onClick={handleButtonClick} />
-      <GreenEyesGeneratorModal 
+      <AssetEditorModal 
         isOpen={isModalOpen} 
         onClose={handleModalClose} 
       />
