@@ -559,7 +559,7 @@ export function AssetEditorModal({ isOpen, onClose }: AssetEditorModalProps) {
   return (
     <Dialog open={isOpen}>
       <DialogContent 
-        className="w-full max-w-sm sm:max-w-2xl lg:max-w-4xl max-h-[95vh] sm:max-h-[90vh] bg-black/95 border-green-400/30 text-green-100 rounded-2xl sm:rounded-3xl p-3 sm:p-6 overflow-hidden z-[200]"
+        className="w-full max-w-sm sm:max-w-2xl lg:max-w-4xl max-h-[95vh] sm:max-h-[90vh] bg-black/95 border-green-400/30 text-green-100 rounded-2xl sm:rounded-3xl p-3 sm:p-6 overflow-hidden z-[200] [&>button]:hidden"
         onPointerDownOutside={(e) => e.preventDefault()}
         onEscapeKeyDown={(e) => e.preventDefault()}
         onInteractOutside={(e) => e.preventDefault()}
@@ -857,7 +857,7 @@ export function AssetEditorModal({ isOpen, onClose }: AssetEditorModalProps) {
                   className="w-full bg-green-600 hover:bg-green-500 active:bg-green-700 text-white rounded-2xl py-4 sm:py-3 text-base sm:text-sm font-medium"
                 >
                   <Download className="w-5 h-5 sm:w-4 sm:h-4 mr-2" />
-                  Export Meme
+                  Export Image
                 </Button>
                 
                 <Button
