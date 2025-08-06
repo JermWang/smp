@@ -175,9 +175,9 @@ export default function V2Page() {
         )
       })}
       
-      {/* Green Eyes Generator - Bottom Left (Development Only) */}
+      {/* Meme Editor - Bottom Left */}
       <div className="absolute bottom-20 left-4 pointer-events-auto z-20">
-        {process.env.NODE_ENV === 'development' && <GreenEyesContainer />}
+        <GreenEyesContainer />
       </div>
 
       {/* UI Controls - Center Bottom (Original Layout) */}
