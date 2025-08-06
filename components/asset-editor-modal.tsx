@@ -84,6 +84,25 @@ function DraggableAsset({ asset, assetData, isSelected, onSelect, onUpdate, edit
     })
   }, [asset.x, asset.y, onSelect, editorRef])
 
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    
+    onSelect()
+    setIsDragging(true)
+    
+    const rect = editorRef.current?.getBoundingClientRect()
+    if (!rect) return
+    
+    const touch = e.touches[0]
+    setDragStart({
+      x: touch.clientX,
+      y: touch.clientY,
+      assetX: asset.x,
+      assetY: asset.y
+    })
+  }, [asset.x, asset.y, onSelect, editorRef])
+
   const handleMouseMove = useCallback((e: MouseEvent) => {
     if (!isDragging || !editorRef.current) return
     
@@ -101,7 +120,29 @@ function DraggableAsset({ asset, assetData, isSelected, onSelect, onUpdate, edit
     onUpdate({ x: constrainedX, y: constrainedY })
   }, [isDragging, dragStart, onUpdate, editorRef])
 
+  const handleTouchMove = useCallback((e: TouchEvent) => {
+    if (!isDragging || !editorRef.current) return
+    
+    const rect = editorRef.current.getBoundingClientRect()
+    const touch = e.touches[0]
+    const deltaX = touch.clientX - dragStart.x
+    const deltaY = touch.clientY - dragStart.y
+    
+    const newX = dragStart.assetX + (deltaX / rect.width) * 100
+    const newY = dragStart.assetY + (deltaY / rect.height) * 100
+    
+    // Constrain to editor bounds
+    const constrainedX = Math.max(5, Math.min(95, newX))
+    const constrainedY = Math.max(5, Math.min(95, newY))
+    
+    onUpdate({ x: constrainedX, y: constrainedY })
+  }, [isDragging, dragStart, onUpdate, editorRef])
+
   const handleMouseUp = useCallback(() => {
+    setIsDragging(false)
+  }, [])
+
+  const handleTouchEnd = useCallback(() => {
     setIsDragging(false)
   }, [])
 
@@ -109,12 +150,16 @@ function DraggableAsset({ asset, assetData, isSelected, onSelect, onUpdate, edit
     if (isDragging) {
       document.addEventListener('mousemove', handleMouseMove)
       document.addEventListener('mouseup', handleMouseUp)
+      document.addEventListener('touchmove', handleTouchMove, { passive: false })
+      document.addEventListener('touchend', handleTouchEnd)
       return () => {
         document.removeEventListener('mousemove', handleMouseMove)
         document.removeEventListener('mouseup', handleMouseUp)
+        document.removeEventListener('touchmove', handleTouchMove)
+        document.removeEventListener('touchend', handleTouchEnd)
       }
     }
-  }, [isDragging, handleMouseMove, handleMouseUp])
+  }, [isDragging, handleMouseMove, handleMouseUp, handleTouchMove, handleTouchEnd])
 
   return (
     <div
@@ -129,6 +174,7 @@ function DraggableAsset({ asset, assetData, isSelected, onSelect, onUpdate, edit
         zIndex: asset.zIndex
       }}
       onMouseDown={handleMouseDown}
+      onTouchStart={handleTouchStart}
     >
       <img 
         src={assetData.src} 
@@ -513,18 +559,18 @@ export function AssetEditorModal({ isOpen, onClose }: AssetEditorModalProps) {
   return (
     <Dialog open={isOpen}>
       <DialogContent 
-        className="max-w-4xl w-full max-h-[90vh] bg-black/95 border-green-400/30 text-green-100 rounded-3xl p-6 overflow-hidden z-[200]"
+        className="w-full max-w-sm sm:max-w-2xl lg:max-w-4xl max-h-[95vh] sm:max-h-[90vh] bg-black/95 border-green-400/30 text-green-100 rounded-2xl sm:rounded-3xl p-3 sm:p-6 overflow-hidden z-[200]"
         onPointerDownOutside={(e) => e.preventDefault()}
         onEscapeKeyDown={(e) => e.preventDefault()}
         onInteractOutside={(e) => e.preventDefault()}
         style={{ isolation: 'isolate' }}
       >
-        <DialogHeader className="mb-4">
+        <DialogHeader className="mb-3 sm:mb-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 text-green-300 text-lg">
-              <Eye className="w-5 h-5" />
-              <DialogTitle className="text-green-300">Green Eyes Generator</DialogTitle>
-              <Sparkles className="w-4 h-4 text-green-400" />
+            <div className="flex items-center gap-1 sm:gap-2 text-green-300 text-base sm:text-lg">
+              <Eye className="w-4 h-4 sm:w-5 sm:h-5" />
+              <DialogTitle className="text-green-300 text-sm sm:text-base">Green Eyes Generator</DialogTitle>
+              <Sparkles className="w-3 h-3 sm:w-4 sm:h-4 text-green-400" />
             </div>
             <Button
               onClick={handleClose}
@@ -537,9 +583,9 @@ export function AssetEditorModal({ isOpen, onClose }: AssetEditorModalProps) {
           </div>
         </DialogHeader>
 
-        <div className="flex gap-4 h-[70vh]">
+        <div className="flex flex-col lg:flex-row gap-3 lg:gap-4 h-[75vh] lg:h-[70vh]">
           {/* Main Editor Area */}
-          <div className="flex-1 space-y-4">
+          <div className="flex-1 space-y-3 lg:space-y-4">
             {stage === 'upload' && (
               <div
                 className={`
@@ -564,16 +610,16 @@ export function AssetEditorModal({ isOpen, onClose }: AssetEditorModalProps) {
                   className="hidden"
                 />
                 
-                <div className="text-center space-y-4">
-                  <div className="w-16 h-16 mx-auto rounded-2xl bg-green-600/20 flex items-center justify-center">
-                    <ImageIcon className="w-8 h-8 text-green-400" />
+                <div className="text-center space-y-3 sm:space-y-4">
+                  <div className="w-12 h-12 sm:w-16 sm:h-16 mx-auto rounded-2xl bg-green-600/20 flex items-center justify-center">
+                    <ImageIcon className="w-6 h-6 sm:w-8 sm:h-8 text-green-400" />
                   </div>
-                  <div className="space-y-2">
-                    <p className="text-lg font-medium text-green-300">
+                  <div className="space-y-1 sm:space-y-2">
+                    <p className="text-base sm:text-lg font-medium text-green-300">
                       Upload Your Image
                     </p>
-                    <p className="text-sm text-green-400/80">
-                      Drag & drop or click to select
+                    <p className="text-xs sm:text-sm text-green-400/80">
+                      Tap to select or drag & drop
                     </p>
                     <p className="text-xs text-green-500/50">
                       JPG, PNG • Max 5MB
@@ -678,24 +724,24 @@ export function AssetEditorModal({ isOpen, onClose }: AssetEditorModalProps) {
 
           {/* Controls Panel */}
           {stage === 'editing' && (
-            <div className="w-80 space-y-4 overflow-y-auto">
+            <div className="w-full lg:w-80 space-y-3 lg:space-y-4 overflow-y-auto lg:max-h-full max-h-[40vh]">
               {/* Asset Library */}
               <div className="bg-green-950/30 rounded-2xl p-4 border border-green-600/20">
                 <h3 className="text-green-300 font-medium mb-3 flex items-center gap-2">
                   <Plus className="w-4 h-4" />
                   Add Stickers
                 </h3>
-                <div className="grid grid-cols-3 gap-2">
+                <div className="grid grid-cols-3 gap-2 sm:gap-3">
                   {ASSETS.map((asset) => (
                     <button
                       key={asset.id}
                       onClick={() => addAsset(asset.id)}
-                      className="aspect-square bg-green-900/20 rounded-lg border border-green-600/30 hover:border-green-400/50 transition-colors p-2 group"
+                      className="aspect-square bg-green-900/20 rounded-lg border border-green-600/30 hover:border-green-400/50 active:border-green-400 transition-colors p-2 sm:p-3 group min-h-[50px] sm:min-h-[60px]"
                     >
                       <img 
                         src={asset.src} 
                         alt={asset.name}
-                        className="w-full h-full object-contain group-hover:scale-110 transition-transform"
+                        className="w-full h-full object-contain group-hover:scale-110 group-active:scale-110 transition-transform"
                       />
                     </button>
                   ))}
@@ -720,8 +766,8 @@ export function AssetEditorModal({ isOpen, onClose }: AssetEditorModalProps) {
                     </Button>
                   </div>
                   
-                  {/* Keyboard shortcuts help */}
-                  <div className="mb-3 p-2 bg-green-900/20 rounded-lg border border-green-600/20">
+                  {/* Keyboard shortcuts help - hidden on mobile */}
+                  <div className="mb-3 p-2 bg-green-900/20 rounded-lg border border-green-600/20 hidden sm:block">
                     <p className="text-xs text-green-400 mb-1">Keyboard Shortcuts:</p>
                     <div className="text-xs text-green-300/80 space-y-0.5">
                       <div>↑↓←→ Move • +/- Scale (0.05x-8x) • [ ] Rotate</div>
@@ -729,40 +775,40 @@ export function AssetEditorModal({ isOpen, onClose }: AssetEditorModalProps) {
                     </div>
                   </div>
                   
-                  <div className="space-y-3">
+                  <div className="space-y-4 sm:space-y-3">
                     <div>
-                      <label className="text-xs text-green-400 mb-1 block">Scale ({selectedAssetData.scale.toFixed(1)}x)</label>
+                      <label className="text-xs sm:text-sm text-green-400 mb-2 block">Scale ({selectedAssetData.scale.toFixed(1)}x)</label>
                       <Slider
                         value={[selectedAssetData.scale]}
                         onValueChange={([value]) => updateAsset(selectedAsset!, { scale: value })}
                         min={0.05}
                         max={8}
                         step={0.05}
-                        className="w-full"
+                        className="w-full h-6 sm:h-4"
                       />
                     </div>
                     
                     <div>
-                      <label className="text-xs text-green-400 mb-1 block">Rotation</label>
+                      <label className="text-xs sm:text-sm text-green-400 mb-2 block">Rotation</label>
                       <Slider
                         value={[selectedAssetData.rotation]}
                         onValueChange={([value]) => updateAsset(selectedAsset!, { rotation: value })}
                         min={-180}
                         max={180}
                         step={15}
-                        className="w-full"
+                        className="w-full h-6 sm:h-4"
                       />
                     </div>
                     
                     <div>
-                      <label className="text-xs text-green-400 mb-1 block">Opacity</label>
+                      <label className="text-xs sm:text-sm text-green-400 mb-2 block">Opacity</label>
                       <Slider
                         value={[selectedAssetData.opacity]}
                         onValueChange={([value]) => updateAsset(selectedAsset!, { opacity: value })}
                         min={10}
                         max={100}
                         step={5}
-                        className="w-full"
+                        className="w-full h-6 sm:h-4"
                       />
                     </div>
                   </div>
@@ -776,50 +822,50 @@ export function AssetEditorModal({ isOpen, onClose }: AssetEditorModalProps) {
                   Image Effects
                 </h3>
                 
-                <div className="space-y-3">
+                <div className="space-y-4 sm:space-y-3">
                   <div>
-                    <label className="text-xs text-green-400 mb-1 block">Desaturation ({filters.desaturation}%)</label>
+                    <label className="text-xs sm:text-sm text-green-400 mb-2 block">Desaturation ({filters.desaturation}%)</label>
                     <Slider
                       value={[filters.desaturation]}
                       onValueChange={([value]) => setFilters(prev => ({ ...prev, desaturation: value }))}
                       min={0}
                       max={100}
                       step={5}
-                      className="w-full"
+                      className="w-full h-6 sm:h-4"
                     />
                   </div>
                   
                   <div>
-                    <label className="text-xs text-green-400 mb-1 block">Glow ({filters.glow}px)</label>
+                    <label className="text-xs sm:text-sm text-green-400 mb-2 block">Glow ({filters.glow}px)</label>
                     <Slider
                       value={[filters.glow]}
                       onValueChange={([value]) => setFilters(prev => ({ ...prev, glow: value }))}
                       min={0}
                       max={25}
                       step={1}
-                      className="w-full"
+                      className="w-full h-6 sm:h-4"
                     />
                   </div>
                 </div>
               </div>
 
               {/* Export */}
-              <div className="space-y-2">
+              <div className="space-y-3">
                 <Button
                   onClick={exportImage}
                   disabled={false}
-                  className="w-full bg-green-600 hover:bg-green-500 text-white rounded-2xl py-3"
+                  className="w-full bg-green-600 hover:bg-green-500 active:bg-green-700 text-white rounded-2xl py-4 sm:py-3 text-base sm:text-sm font-medium"
                 >
-                  <Download className="w-4 h-4 mr-2" />
+                  <Download className="w-5 h-5 sm:w-4 sm:h-4 mr-2" />
                   Export Meme
                 </Button>
                 
                 <Button
                   onClick={resetModal}
                   variant="outline"
-                  className="w-full border-green-600/50 text-green-300 hover:bg-green-600/10 rounded-2xl py-3"
+                  className="w-full border-green-600/50 text-green-300 hover:bg-green-600/10 active:bg-green-600/20 rounded-2xl py-4 sm:py-3 text-base sm:text-sm font-medium"
                 >
-                  <Upload className="w-4 h-4 mr-2" />
+                  <Upload className="w-5 h-5 sm:w-4 sm:h-4 mr-2" />
                   New Image
                 </Button>
               </div>

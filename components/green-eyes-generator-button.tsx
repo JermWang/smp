@@ -37,13 +37,13 @@ export function GreenEyesGeneratorButton({ onClick, className = "" }: GreenEyesG
       >
         {/* Main Sleek Button */}
         <div className={`
-          relative px-4 py-3 rounded-lg border border-green-400/30
+          relative px-4 sm:px-4 py-4 sm:py-3 rounded-lg border border-green-400/30
           bg-gradient-to-r from-green-950/90 to-emerald-900/90 
           backdrop-blur-md transition-all duration-300
           ${isPressed ? 'scale-95 shadow-inner' : 'scale-100'}
           ${isHovered ? 'border-green-300/60 shadow-lg shadow-green-400/20' : ''}
-          hover:shadow-xl hover:shadow-green-400/25
-          min-w-[120px]
+          hover:shadow-xl hover:shadow-green-400/25 active:shadow-inner
+          min-w-[140px] sm:min-w-[120px]
         `}>
           {/* Animated glow effect */}
           <div className={`
