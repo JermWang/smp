@@ -76,7 +76,7 @@ export function GreenEyesGeneratorButton({ onClick, className = "" }: GreenEyesG
             <span className={`text-sm font-medium transition-all duration-300 ${
               isHovered ? 'text-green-200' : 'text-green-300'
             }`}>
-              MEME EDITOR
+              GREEN EYES
             </span>
           </div>
           

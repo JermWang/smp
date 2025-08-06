@@ -523,7 +523,7 @@ export function AssetEditorModal({ isOpen, onClose }: AssetEditorModalProps) {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 text-green-300 text-lg">
               <Eye className="w-5 h-5" />
-              <DialogTitle className="text-green-300">Deep Fried Meme Editor</DialogTitle>
+              <DialogTitle className="text-green-300">Green Eyes Generator</DialogTitle>
               <Sparkles className="w-4 h-4 text-green-400" />
             </div>
             <Button

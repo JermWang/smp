@@ -175,7 +175,7 @@ export default function V2Page() {
         )
       })}
       
-      {/* Meme Editor - Bottom Left */}
+      {/* Green Eyes Generator - Bottom Left */}
       <div className="absolute bottom-20 left-4 pointer-events-auto z-20">
         <GreenEyesContainer />
       </div>
