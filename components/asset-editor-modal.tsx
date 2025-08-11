@@ -381,23 +381,48 @@ export function AssetEditorModal({ isOpen, onClose }: AssetEditorModalProps) {
         img.src = previewUrl
       })
 
-      // Preserve original aspect ratio - use image's natural dimensions
-      canvas.width = img.naturalWidth
-      canvas.height = img.naturalHeight
+      // CRITICAL FIX: Match the preview window's square cropping behavior
+      // Preview uses object-cover on a square container, so export should match
+      const imageAspectRatio = img.naturalWidth / img.naturalHeight
+      const isSquare = Math.abs(imageAspectRatio - 1) < 0.01
       
-      console.log(`📐 Canvas set to preserve original dimensions: ${canvas.width}x${canvas.height}`)
+      let cropX = 0, cropY = 0, cropWidth = img.naturalWidth, cropHeight = img.naturalHeight
+      let exportSize = Math.max(img.naturalWidth, img.naturalHeight) // Use largest dimension for quality
+      
+      if (!isSquare) {
+        // Calculate crop area to match preview's object-cover behavior
+        if (imageAspectRatio > 1) {
+          // Landscape: crop sides to make square
+          cropWidth = img.naturalHeight // Use height as the square dimension
+          cropX = (img.naturalWidth - cropWidth) / 2
+        } else {
+          // Portrait: crop top/bottom to make square  
+          cropHeight = img.naturalWidth // Use width as the square dimension
+          cropY = (img.naturalHeight - cropHeight) / 2
+        }
+      }
+      
+      // Set canvas to square dimensions (matching preview aspect ratio)
+      canvas.width = exportSize
+      canvas.height = exportSize
+      
+      console.log(`📐 Export canvas: ${canvas.width}x${canvas.height}, crop area: ${cropWidth}x${cropHeight} at (${cropX}, ${cropY})`)
 
       // Apply simplified filters - only desaturation
       const saturation = 100 - filters.desaturation
       ctx.filter = `saturate(${saturation}%)`
       
-      // Draw image at full size to preserve quality
-      ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
+      // Draw the cropped image to fill the square canvas (matching preview behavior)
+      ctx.drawImage(
+        img, 
+        cropX, cropY, cropWidth, cropHeight,  // Source crop area
+        0, 0, canvas.width, canvas.height      // Fill entire square canvas
+      )
 
       // Reset filter for assets
       ctx.filter = 'none'
 
-      // Draw assets in z-index order
+      // Draw assets in z-index order - positioning now matches preview exactly
       const sortedAssets = [...placedAssets].sort((a, b) => a.zIndex - b.zIndex)
       
       for (const asset of sortedAssets) {
@@ -415,18 +440,16 @@ export function AssetEditorModal({ isOpen, onClose }: AssetEditorModalProps) {
 
         ctx.save()
         
-        // SIMPLE APPROACH: Direct percentage mapping
+        // FIXED: Use canvas dimensions for positioning (now both preview and export are square)
         const centerX = (asset.x / 100) * canvas.width
         const centerY = (asset.y / 100) * canvas.height
-        
-
         
         ctx.translate(centerX, centerY)
         ctx.rotate((asset.rotation * Math.PI) / 180)
         ctx.globalAlpha = asset.opacity / 100
         
-        // Scale assets proportionally for 1000px canvas
-        const scaleFactor = 2.5 // Sweet spot between 1x and 10x
+        // Scale assets proportionally based on canvas size
+        const scaleFactor = canvas.width / 400 // Dynamic scaling based on export size
         const baseSize = 100 * scaleFactor
         const scaledWidth = baseSize * asset.scale
         const scaledHeight = (baseSize * assetImg.height / assetImg.width) * asset.scale
