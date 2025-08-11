@@ -371,11 +371,7 @@ export function AssetEditorModal({ isOpen, onClose }: AssetEditorModalProps) {
       const ctx = canvas.getContext('2d')
       if (!ctx) throw new Error('Canvas context not available')
 
-      // Simple square canvas
-      canvas.width = 1000
-      canvas.height = 1000
-
-      // Create main image
+      // Create main image to get dimensions
       const img = new window.Image()
       img.crossOrigin = 'anonymous'
       
@@ -385,10 +381,17 @@ export function AssetEditorModal({ isOpen, onClose }: AssetEditorModalProps) {
         img.src = previewUrl
       })
 
+      // Preserve original aspect ratio - use image's natural dimensions
+      canvas.width = img.naturalWidth
+      canvas.height = img.naturalHeight
+      
+      console.log(`📐 Canvas set to preserve original dimensions: ${canvas.width}x${canvas.height}`)
+
       // Apply simplified filters - only desaturation
       const saturation = 100 - filters.desaturation
       ctx.filter = `saturate(${saturation}%)`
       
+      // Draw image at full size to preserve quality
       ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
 
       // Reset filter for assets
@@ -454,7 +457,7 @@ export function AssetEditorModal({ isOpen, onClose }: AssetEditorModalProps) {
         ctx.globalCompositeOperation = 'source-over'
       }
 
-      // Download the result
+      // Download the result with maximum quality
       canvas.toBlob((blob) => {
         if (!blob) return
         
@@ -462,13 +465,15 @@ export function AssetEditorModal({ isOpen, onClose }: AssetEditorModalProps) {
         const a = document.createElement('a')
         a.href = url
         a.download = `proliferation-${Date.now()}.png`
+        a.style.display = 'none'
         document.body.appendChild(a)
         a.click()
         document.body.removeChild(a)
         URL.revokeObjectURL(url)
         
+        console.log('✅ Asset editor image exported successfully without compression')
         setStage('editing')
-      }, 'image/png')
+      }, 'image/png', 1.0) // Maximum quality (1.0 = 100%)
 
     } catch (error) {
       console.error('Export failed:', error)

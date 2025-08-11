@@ -202,8 +202,8 @@ export function GreenEyesGeneratorModal({ isOpen, onClose }: GreenEyesGeneratorM
           alert('🚫 Too many requests. Please wait a minute before trying again.')
         } else if (error.message.includes('400') || error.message.includes('Invalid image')) {
           alert('📁 Invalid image file. Please try a different JPG or PNG image.')
-        } else if (error.message.includes('AI service') || error.message.includes('OpenAI')) {
-          alert('🤖 AI service is temporarily busy. Please try again in a moment.')
+        } else if (error.message.includes('processing') || error.message.includes('server')) {
+          alert('🔧 Image processing error. Please try again in a moment.')
         } else if (error.message.includes('Storage') || error.message.includes('storage')) {
           alert('💾 Storage error. Please try again.')
         } else if (error.message.includes('Service temporarily unavailable')) {
@@ -223,19 +223,35 @@ export function GreenEyesGeneratorModal({ isOpen, onClose }: GreenEyesGeneratorM
     if (!processedImageUrl) return
 
     try {
-      const response = await fetch(processedImageUrl)
+      // Fetch the image with explicit headers to preserve quality
+      const response = await fetch(processedImageUrl, {
+        headers: {
+          'Accept': 'image/png,image/*;q=0.9',
+        }
+      })
+      
+      if (!response.ok) {
+        throw new Error(`Failed to fetch image: ${response.status}`)
+      }
+      
       const blob = await response.blob()
+      
+      // Ensure we're working with the original quality blob
       const url = URL.createObjectURL(blob)
       
       const a = document.createElement('a')
       a.href = url
       a.download = `green-eyes-${Date.now()}.png`
+      a.style.display = 'none'
       document.body.appendChild(a)
       a.click()
       document.body.removeChild(a)
       URL.revokeObjectURL(url)
+      
+      console.log('✅ Image downloaded successfully without compression')
     } catch (error) {
       console.error('Error downloading image:', error)
+      alert('Failed to download image. Please try again.')
     }
   }
 
@@ -371,7 +387,7 @@ export function GreenEyesGeneratorModal({ isOpen, onClose }: GreenEyesGeneratorM
                               Tap to upload or drag & drop
                             </p>
                             <p className="text-xs text-green-600">
-                              Laser beams FROM eyes • Preserves your artwork
+                              Manual green laser eyes editor • Preserves your artwork
                             </p>
                             <p className="text-xs text-green-500/50">
                               Perfect for NFTs, anime, cartoons • JPG, PNG • Max 5MB
@@ -398,7 +414,7 @@ export function GreenEyesGeneratorModal({ isOpen, onClose }: GreenEyesGeneratorM
                       className="w-full bg-green-600 hover:bg-green-500 text-white rounded-2xl py-3"
                     >
                       <Zap className="w-4 h-4 mr-2" />
-                      Add Green Eyes
+                      Prepare for Manual Editing
                     </Button>
                     <p className="text-xs text-green-500/60 text-center">
                       💡 Hover over image above to change it
@@ -465,7 +481,7 @@ export function GreenEyesGeneratorModal({ isOpen, onClose }: GreenEyesGeneratorM
                 <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 text-center">
                   <div className="flex items-center justify-center gap-2 mb-2">
                     <Eye className="w-4 h-4 text-green-400 animate-pulse" />
-                    <span className="text-green-300 text-sm">Transforming</span>
+                    <span className="text-green-300 text-sm">Preparing</span>
                     <Eye className="w-4 h-4 text-green-400 animate-pulse" />
                   </div>
                 </div>
@@ -486,10 +502,16 @@ export function GreenEyesGeneratorModal({ isOpen, onClose }: GreenEyesGeneratorM
           {/* Complete Stage */}
           {stage === 'complete' && processedImageUrl && (
             <div className="space-y-4">
-              <div className="text-center">
+              <div className="text-center space-y-2">
                 <h3 className="text-lg font-medium text-green-300 mb-2">
-                  🎉 Green Eyes Activated!
+                  🎉 Ready for Manual Editing!
                 </h3>
+                <p className="text-xs text-green-500/80">
+                  Download this image and add green laser eyes in your favorite editor
+                </p>
+                <p className="text-xs text-green-600/60">
+                  💡 Tip: Use bright green (#00FF00) for best laser effect
+                </p>
               </div>
               
               {/* Large Square Result */}
@@ -542,7 +564,7 @@ export function GreenEyesGeneratorModal({ isOpen, onClose }: GreenEyesGeneratorM
                   className="w-full bg-green-600 hover:bg-green-500 text-white rounded-2xl py-3"
                 >
                   <Download className="w-4 h-4 mr-2" />
-                  Save PFP
+                  Download for Manual Editing
                 </Button>
                 <Button
                   onClick={resetModal}

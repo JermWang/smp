@@ -121,7 +121,7 @@ export function ScoreTracker({ currentScore, onReset }: ScoreTrackerProps) {
         // Reset shadow
         ctx.shadowBlur = 0;
         
-        resolve(canvas.toDataURL('image/png'));
+        resolve(canvas.toDataURL('image/png', 1.0)); // Maximum quality
       };
       backgroundImg.onerror = () => {
         // Fallback to gradient background if image fails
@@ -151,7 +151,7 @@ export function ScoreTracker({ currentScore, onReset }: ScoreTrackerProps) {
          ctx.font = 'bold 28px Arial';
          ctx.fillText('SMP7700.XYZ', canvas.width / 2, 420);
         
-        resolve(canvas.toDataURL('image/png'));
+        resolve(canvas.toDataURL('image/png', 1.0)); // Maximum quality
       };
       backgroundImg.src = '/1500x500.jpg';
     });
