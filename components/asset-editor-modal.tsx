@@ -47,6 +47,11 @@ interface ImageFilters {
   glow: number
 }
 
+interface CropPosition {
+  x: number // 0-100 percentage from left
+  y: number // 0-100 percentage from top
+}
+
 const ASSETS: Asset[] = [
   { id: 'smpp', name: 'SMPP Logo', src: '/smpp.png', category: 'stickers' },
   { id: 'proliferate', name: 'Proliferate', src: '/proliferate.png', category: 'stickers' },
@@ -220,6 +225,13 @@ export function AssetEditorModal({ isOpen, onClose }: AssetEditorModalProps) {
     desaturation: 0,
     glow: 0
   })
+  
+  const [cropPosition, setCropPosition] = useState<CropPosition>({
+    x: 50, // Center by default
+    y: 50
+  })
+  
+  const [imageAspectRatio, setImageAspectRatio] = useState<number>(1)
 
   const fileInputRef = useRef<HTMLInputElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -271,10 +283,19 @@ export function AssetEditorModal({ isOpen, onClose }: AssetEditorModalProps) {
       reader.onload = (e) => {
         const dataUrl = e.target?.result as string
         if (dataUrl) {
-          console.log('✅ FileReader success, data URL created')
-          setPreviewUrl(dataUrl)
-          setImageLoading(false)
-          setStage('editing')
+                  console.log('✅ FileReader success, data URL created')
+        setPreviewUrl(dataUrl)
+        setImageLoading(false)
+        setStage('editing')
+        
+        // For FileReader fallback, we need to create an image to get dimensions
+        const img = document.createElement('img')
+        img.onload = () => {
+          const aspectRatio = img.naturalWidth / img.naturalHeight
+          setImageAspectRatio(aspectRatio)
+          setCropPosition({ x: 50, y: 50 })
+        }
+        img.src = dataUrl
         }
       }
       reader.onerror = (e) => {
@@ -297,6 +318,13 @@ export function AssetEditorModal({ isOpen, onClose }: AssetEditorModalProps) {
         setPreviewUrl(url)
         setImageLoading(false)
         setStage('editing')
+        
+        // Calculate and store aspect ratio for crop controls
+        const aspectRatio = testImg.naturalWidth / testImg.naturalHeight
+        setImageAspectRatio(aspectRatio)
+        
+        // Reset crop position to center for new image
+        setCropPosition({ x: 50, y: 50 })
       }
       testImg.onerror = () => {
         console.log('❌ Blob URL test failed, trying FileReader...')
@@ -381,24 +409,25 @@ export function AssetEditorModal({ isOpen, onClose }: AssetEditorModalProps) {
         img.src = previewUrl
       })
 
-      // CRITICAL FIX: Match the preview window's square cropping behavior
-      // Preview uses object-cover on a square container, so export should match
-      const imageAspectRatio = img.naturalWidth / img.naturalHeight
-      const isSquare = Math.abs(imageAspectRatio - 1) < 0.01
+      // CRITICAL FIX: Match the preview window's square cropping behavior with custom position
+      const currentAspectRatio = img.naturalWidth / img.naturalHeight
+      const isSquare = Math.abs(currentAspectRatio - 1) < 0.01
       
       let cropX = 0, cropY = 0, cropWidth = img.naturalWidth, cropHeight = img.naturalHeight
       let exportSize = Math.max(img.naturalWidth, img.naturalHeight) // Use largest dimension for quality
       
       if (!isSquare) {
-        // Calculate crop area to match preview's object-cover behavior
-        if (imageAspectRatio > 1) {
+        // Calculate crop area using user's position settings
+        if (currentAspectRatio > 1) {
           // Landscape: crop sides to make square
           cropWidth = img.naturalHeight // Use height as the square dimension
-          cropX = (img.naturalWidth - cropWidth) / 2
+          const maxCropX = img.naturalWidth - cropWidth
+          cropX = (cropPosition.x / 100) * maxCropX
         } else {
           // Portrait: crop top/bottom to make square  
           cropHeight = img.naturalWidth // Use width as the square dimension
-          cropY = (img.naturalHeight - cropHeight) / 2
+          const maxCropY = img.naturalHeight - cropHeight
+          cropY = (cropPosition.y / 100) * maxCropY
         }
       }
       
@@ -502,7 +531,7 @@ export function AssetEditorModal({ isOpen, onClose }: AssetEditorModalProps) {
       console.error('Export failed:', error)
       alert('Export failed. Please try again.')
     }
-  }, [previewUrl, placedAssets, filters])
+  }, [previewUrl, placedAssets, filters, cropPosition])
 
   const resetModal = () => {
     cleanupPreviewUrl()
@@ -517,6 +546,8 @@ export function AssetEditorModal({ isOpen, onClose }: AssetEditorModalProps) {
       desaturation: 0,
       glow: 0
     })
+    setCropPosition({ x: 50, y: 50 })
+    setImageAspectRatio(1)
     if (fileInputRef.current) {
       fileInputRef.current.value = ''
     }
@@ -681,7 +712,7 @@ export function AssetEditorModal({ isOpen, onClose }: AssetEditorModalProps) {
 
                   }}
                 >
-                  {/* Background Image with all filters */}
+                  {/* Background Image with all filters and custom crop positioning */}
                   <img
                     src={previewUrl || ''}
                     alt="Base Image"
@@ -693,7 +724,11 @@ export function AssetEditorModal({ isOpen, onClose }: AssetEditorModalProps) {
                         0 0 ${filters.glow * 4}px rgba(0,255,0,0.6),
                         0 0 ${filters.glow * 6}px rgba(0,255,0,0.4),
                         inset 0 0 ${filters.glow}px rgba(0,255,0,0.2)
-                      ` : 'none'
+                      ` : 'none',
+                      // Apply crop positioning for non-square images
+                      objectPosition: Math.abs(imageAspectRatio - 1) > 0.01 
+                        ? `${cropPosition.x}% ${cropPosition.y}%` 
+                        : 'center'
                     }}
                     onLoad={() => console.log('✅ Base image loaded successfully')}
                     onError={(e) => {
@@ -839,6 +874,56 @@ export function AssetEditorModal({ isOpen, onClose }: AssetEditorModalProps) {
                         className="w-full h-6 sm:h-4"
                       />
                     </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Crop Position Controls - Only show for non-square images */}
+              {Math.abs(imageAspectRatio - 1) > 0.01 && (
+                <div className="bg-green-950/30 rounded-2xl p-4 border border-green-600/20">
+                  <h3 className="text-green-300 font-medium mb-3 flex items-center gap-2">
+                    <Move className="w-4 h-4" />
+                    Crop Position
+                  </h3>
+                  
+                  <div className="space-y-4 sm:space-y-3">
+                    {imageAspectRatio > 1 ? (
+                      // Landscape image - show horizontal positioning
+                      <div>
+                        <label className="text-xs sm:text-sm text-green-400 mb-2 block">
+                          Horizontal Position ({cropPosition.x}%)
+                        </label>
+                        <Slider
+                          value={[cropPosition.x]}
+                          onValueChange={([value]) => setCropPosition(prev => ({ ...prev, x: value }))}
+                          min={0}
+                          max={100}
+                          step={1}
+                          className="w-full h-6 sm:h-4"
+                        />
+                        <p className="text-xs text-green-500/60 mt-1">
+                          Adjust which part of the image is visible in the square crop
+                        </p>
+                      </div>
+                    ) : (
+                      // Portrait image - show vertical positioning  
+                      <div>
+                        <label className="text-xs sm:text-sm text-green-400 mb-2 block">
+                          Vertical Position ({cropPosition.y}%)
+                        </label>
+                        <Slider
+                          value={[cropPosition.y]}
+                          onValueChange={([value]) => setCropPosition(prev => ({ ...prev, y: value }))}
+                          min={0}
+                          max={100}
+                          step={1}
+                          className="w-full h-6 sm:h-4"
+                        />
+                        <p className="text-xs text-green-500/60 mt-1">
+                          Adjust which part of the image is visible in the square crop
+                        </p>
+                      </div>
+                    )}
                   </div>
                 </div>
               )}
